@@ -3,11 +3,11 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { parse } from "./lib/utils";
 
-export const ADMIN_HOSTNAMES = new Set(["admin.localhost:8000"]);
+export const ADMIN_HOSTNAMES = new Set(["admin.localhost:8888"]);
 
-export const BUYER_HOSTNAMES = new Set(["localhost:8000"]);
+export const BUYER_HOSTNAMES = new Set(["localhost:8888"]);
 
-export const SELLER_HOSTNAMES = new Set(["seller.localhost:8000"]);
+export const SELLER_HOSTNAMES = new Set(["seller.localhost:8888"]);
 
 export function middleware(request: NextRequest) {
   const { domain, fullPath } = parse(request);
