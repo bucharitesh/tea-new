@@ -1,28 +1,33 @@
 {
-  "name": "tea-monorepo",
+  "name": "tea-new-2",
+  "version": "0.1.0",
   "private": true,
-  "license": "AGPL-3.0-or-later",
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "clean": "turbo clean",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "prettier-check": "prettier --check \"**/*.{ts,tsx,md}\"",
-    "publish-tw": "turbo build --filter='@tea/tailwind-config' && cd packages/tailwind-config && npm publish && cd ../../",
-    "publish-ui": "turbo build --filter='@tea/ui' && cd packages/ui && npm publish && cd ../../",
-    "publish-utils": "turbo build --filter='@tea/utils' && cd packages/utils && npm publish && cd ../../",
-    "script": "echo 'Run this script in apps/web'",
-    "test": "turbo run test"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@auth/prisma-adapter": "^2.4.2",
+    "@next-auth/prisma-adapter": "^1.0.7",
+    "@prisma/client": "^5.19.1",
+    "clsx": "^2.1.1",
+    "next": "14.2.7",
+    "next-auth": "^5.0.0-beta.20",
+    "react": "^18",
+    "react-dom": "^18",
+    "sonner": "^1.5.0",
+    "tailwind-merge": "^2.5.2"
   },
   "devDependencies": {
-    "@tea/tailwind-config": "workspace:*",
-    "eslint": "^8.48.0",
-    "prettier": "^3.2.5",
-    "prettier-plugin-organize-imports": "^3.2.4",
-    "prettier-plugin-tailwindcss": "^0.6.0",
-    "tsconfig": "workspace:*",
-    "turbo": "^1.12.5"
-  },
-  "packageManager": "pnpm@8.6.10"
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.7",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
 }
