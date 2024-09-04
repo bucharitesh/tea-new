@@ -19,18 +19,34 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
+        role: { label: "Role", type: "role" },
       },
       async authorize(credentials) {
         let user: any;
 
         console.log("admin cred", credentials);
+        if (credentials?.role === "ADMIN") {
+          if (
+            credentials?.email === "bucha@gmail.com" &&
+            credentials?.password === "plmplmplm"
+          ) {
+            user = {
+              email: credentials?.email,
+              role: "ADMIN",
+            };
+            return user;
+          }
+
+          return null;
+        }
+
         if (
-          credentials?.email === "bucha@gmail.com" &&
+          credentials?.email === "pranav@gmail.com" &&
           credentials?.password === "plmplmplm"
         ) {
           user = {
             email: credentials?.email,
-            role: "ADMIN",
+            role: "BUYER",
           };
           return user;
         }

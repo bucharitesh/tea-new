@@ -21,6 +21,7 @@ export default function Page() {
         redirect: false,
         email: email.toLowerCase(),
         password: password,
+        role: "BUYER",
         callbackUrl: "/",
       });
 
