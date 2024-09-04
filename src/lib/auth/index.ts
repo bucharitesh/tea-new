@@ -16,7 +16,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialProvider({
-      name: "AdminCredentials",
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
@@ -53,36 +52,23 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    // async redirect({ url, baseUrl }) {
-    //   const allowedOrigins = [
-    //     "admin.localhost:3000",
-    //     "localhost:3000",
-    //     "seller.localhost:3000",
-    //   ];
-    //   if (allowedOrigins.some((origin) => url.startsWith(origin))) {
-    //     return url;
-    //   }
-    //   return baseUrl;
-    // },
     jwt: ({ token, user }) => {
       if (user) {
         return {
           ...token,
-          ...user,
+          role: user.role, // Explicitly add role to token
         };
       }
 
       return token;
     },
     session: async ({ session, token }) => {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          ...token,
-        },
-      };
-    }},
+      if (token) {
+        session.user.role = token.role; // Add role to session
+      }
+      return session;
+    },
+  },
   pages: {
     signIn: "/login", // Custom login page
     error: "/error", // Error page

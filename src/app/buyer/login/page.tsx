@@ -17,10 +17,11 @@ export default function Page() {
     setError("");
 
     try {
-      const res: any = await signIn("Credentials", {
+      const res: any = await signIn("credentials", {
         redirect: false,
         email: email.toLowerCase(),
         password: password,
+        callbackUrl: "/",
       });
 
       console.log("res", res);

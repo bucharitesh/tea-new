@@ -12,7 +12,7 @@ export const signInCustomerCreds = async (
   redirect: boolean = false
 ) => {
   try {
-    const response = await signIn("CustomerCredentials", {
+    const response = await signIn("Credentials", {
       email,
       password,
       role: "BUYER",
