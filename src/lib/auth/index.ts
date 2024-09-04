@@ -16,53 +16,75 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialProvider({
-      name: "Credentials",
+      name: "AdminCredentials",
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
-        role: { label: "Role", type: "role" },
       },
       async authorize(credentials) {
         let user: any;
 
-        if (credentials?.role === "ADMIN") {
-          if (
-            credentials?.email === "bucha@gmail.com" &&
-            credentials?.password === "plmplmplm"
-          ) {
-            user = {
-              email: credentials?.email,
-              role: "ADMIN"
-            }
-            return user;
-          }
-
-          return null;
-        }
-
-        user = await prisma.user.findUnique({
-          where: { email: credentials?.email as string },
-        });
-
-        if (user && user.password && credentials?.password) {
-          if (String(credentials.password) === String(user.password)) {
-            return user;
-          }
+        console.log("admin cred", credentials);
+        if (
+          credentials?.email === "bucha@gmail.com" &&
+          credentials?.password === "plmplmplm"
+        ) {
+          user = {
+            email: credentials?.email,
+            role: "ADMIN",
+          };
+          return user;
         }
 
         return null;
+
+        // user = await prisma.user.findUnique({
+        //   where: { email: credentials?.email as string },
+        // });
+
+        // if (user && user.password && credentials?.password) {
+        //   if (String(credentials.password) === String(user.password)) {
+        //     return user;
+        //   }
+        // }
+
+        // return null;
       },
     }),
   ],
   callbacks: {
-    async session({ session, token, user }) {
-      session.user.role = user.role; // Add role to session object
-      session.user.id = user.id; // Add user id to session
-      return session;
+    // async redirect({ url, baseUrl }) {
+    //   const allowedOrigins = [
+    //     "admin.localhost:3000",
+    //     "localhost:3000",
+    //     "seller.localhost:3000",
+    //   ];
+    //   if (allowedOrigins.some((origin) => url.startsWith(origin))) {
+    //     return url;
+    //   }
+    //   return baseUrl;
+    // },
+    jwt: ({ token, user }) => {
+      if (user) {
+        return {
+          ...token,
+          ...user,
+        };
+      }
+
+      return token;
     },
-  },
+    session: async ({ session, token }) => {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          ...token,
+        },
+      };
+    }},
   pages: {
     signIn: "/login", // Custom login page
-    error: "/login", // Error page
+    error: "/error", // Error page
   },
 });

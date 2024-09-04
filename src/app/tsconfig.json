@@ -38,6 +38,6 @@
     ".next/types/**/*.ts",
     "../../packages/blocks/src/event-list.tsx",
     "../../packages/ui/src/hooks/use-pagination.ts"
-  ],
+, "../middleware.ts"  ],
   "exclude": ["node_modules"]
 }
