@@ -15,7 +15,7 @@ export const signInCustomerCreds = async (
     const response = await signIn("Credentials", {
       email,
       password,
-      role: "BUYER",
+      tenant: "BUYER",
       redirect: false,
     });
     return response;

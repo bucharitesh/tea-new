@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
   const dashboardUrl = new URL("/dashboard", request.url);
 
   const isLoggedIn = !!session?.user;
-  const userRole = session?.user?.role;
+  const userTenant = session?.user?.tenant;
 
   if (BUYER_HOSTNAMES.has(domain)) {
     if (!isLoggedIn && fullPath !== "/login") {
@@ -28,24 +28,24 @@ export async function middleware(request: NextRequest) {
   }
 
   if (SELLER_HOSTNAMES.has(domain)) {
-    if (!isLoggedIn || userRole !== "SELLER") {
+    if (!isLoggedIn || userTenant !== "SELLER") {
       if (fullPath !== "/login") {
         return NextResponse.redirect(loginUrl);
       }
     }
-    if (isLoggedIn && userRole === "SELLER" && fullPath === "/login") {
+    if (isLoggedIn && userTenant === "SELLER" && fullPath === "/login") {
       return NextResponse.redirect(dashboardUrl);
     }
     return NextResponse.rewrite(new URL(`/seller${fullPath}`, request.url));
   }
 
   if (ADMIN_HOSTNAMES.has(domain)) {
-    if (!isLoggedIn || userRole !== "ADMIN") {
+    if (!isLoggedIn || userTenant !== "ADMIN") {
       if (fullPath !== "/login") {
         return NextResponse.redirect(loginUrl);
       }
     }
-    if (isLoggedIn && userRole === "ADMIN" && fullPath === "/login") {
+    if (isLoggedIn && userTenant === "ADMIN" && fullPath === "/login") {
       return NextResponse.redirect(dashboardUrl);
     }
     return NextResponse.rewrite(new URL(`/admin${fullPath}`, request.url));

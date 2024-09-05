@@ -19,20 +19,19 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
-        role: { label: "Role", type: "role" },
+        tenant: { label: "Tenant", type: "text" },
       },
       async authorize(credentials) {
         let user: any;
 
-        console.log("admin cred", credentials);
-        if (credentials?.role === "ADMIN") {
+        if (credentials?.tenant === "ADMIN") {
           if (
             credentials?.email === "bucha@gmail.com" &&
             credentials?.password === "plmplmplm"
           ) {
             user = {
               email: credentials?.email,
-              role: "ADMIN",
+              tenant: "ADMIN",
             };
             return user;
           }
@@ -46,7 +45,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         ) {
           user = {
             email: credentials?.email,
-            role: "BUYER",
+            tenant: "BUYER",
           };
           return user;
         }
@@ -72,7 +71,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (user) {
         return {
           ...token,
-          role: user.role, // Explicitly add role to token
+          tenant: user.tenant, // Explicitly add role to token
         };
       }
 
@@ -80,13 +79,13 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
     session: async ({ session, token }) => {
       if (token) {
-        session.user.role = token.role; // Add role to session
+        session.user.tenant = token.tenant; // Add role to session
       }
       return session;
     },
   },
   pages: {
     signIn: "/login", // Custom login page
-    error: "/error", // Error page
+    error: "/login", // Error page
   },
 });

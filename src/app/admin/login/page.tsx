@@ -21,7 +21,7 @@ export default function Page() {
         redirect: false,
         email: email.toLowerCase(),
         password: password,
-        role: "ADMIN",
+        tenant: "ADMIN",
       });
 
       console.log("res", res);
