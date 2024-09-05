@@ -13,10 +13,16 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
-  role               Role     @default(BUYER)
-  email              String   @unique
+enum ApprovalStatus {
+  INITIALISED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+model Buyer {
+  id                 String         @id @default(auto()) @map("_id") @db.ObjectId
+  email              String         @unique
   password           String
   businessName       String?
   address            String?
@@ -33,16 +39,40 @@ model User {
   bankAccountNo      String?
   ifscCode           String?
   nameOfTransport    String?
-  buyerId            String?  @unique
-  sellerId           String?  @unique
-  nameOfMark         String?  @unique
-  isApproved         Boolean  @default(false)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  isApproved         ApprovalStatus @default(INITIALISED)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
 }
 
-enum Role {
-  BUYER
-  SELLER
-  ADMIN
+model Seller {
+  id                 String         @id @default(auto()) @map("_id") @db.ObjectId
+  nameOfMark         String         @unique
+  password           String
+  email              String?  
+  businessName       String?
+  address            String?
+  pincode            String?
+  district           String?
+  state              String?
+  name               String?
+  contactNo          String?
+  alternateContactNo String?
+  panNo              String?
+  gstNo              String?
+  fssaiNo            String?
+  tmcoNo             String?
+  bankAccountNo      String?
+  ifscCode           String?
+  nameOfTransport    String?
+  isApproved         ApprovalStatus @default(INITIALISED)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+}
+
+model Admin {
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_id            String   @unique
+  password           String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }
