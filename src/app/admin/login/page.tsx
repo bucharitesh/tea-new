@@ -22,13 +22,12 @@ export default function Page() {
         email: email.toLowerCase(),
         password: password,
         role: "ADMIN",
-        callbackUrl: "/"
       });
 
       console.log("res", res);
       if (!res?.error) {
         toast.success("success!");
-        // router.push("/"); // Redirect to dashboard or another page
+        router.push("/dashboard"); // Redirect to dashboard or another page
       } else {
         setError("Invalid email or password!");
         toast.error("Invalid credentials!");
