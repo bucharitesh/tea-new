@@ -22,7 +22,8 @@ enum ApprovalStatus {
 
 model Buyer {
   id                 String         @id @default(auto()) @map("_id") @db.ObjectId
-  email              String         @unique
+  user_id            String         @unique
+  email              String?         
   password           String
   businessName       String?
   address            String?
@@ -46,7 +47,7 @@ model Buyer {
 
 model Seller {
   id                 String         @id @default(auto()) @map("_id") @db.ObjectId
-  nameOfMark         String         @unique
+  user_id            String         @unique
   password           String
   email              String?  
   businessName       String?

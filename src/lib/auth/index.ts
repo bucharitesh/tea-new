@@ -39,30 +39,31 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           return null;
         }
 
-        if (
-          credentials?.user_id === "buyer" &&
-          credentials?.password === "plmplmplm"
-        ) {
-          user = {
-            user_id: credentials?.user_id,
-            tenant: "BUYER",
-          };
-          return user;
-        }
-
-        return null;
-
-        // user = await prisma.user.findUnique({
-        //   where: { email: credentials?.email as string },
-        // });
-
-        // if (user && user.password && credentials?.password) {
-        //   if (String(credentials.password) === String(user.password)) {
-        //     return user;
-        //   }
+        // if (
+        //   credentials?.email === "pranav@gmail.com" &&
+        //   credentials?.password === "plmplmplm"
+        // ) {
+        //   user = {
+        //     email: credentials?.email,
+        //     tenant: "BUYER",
+        //   };
+        //   return user;
         // }
 
         // return null;
+        if (credentials?.tenant === "BUYER") {
+          user = await prisma.buyer.findUnique({
+            where: { user_id: credentials?.user_id as string },
+          });
+
+          if (user && user.password && credentials?.password) {
+            if (String(credentials.password) === String(user.password)) {
+              return user;
+            }
+          }
+          return null;
+        }
+
       },
     }),
   ],

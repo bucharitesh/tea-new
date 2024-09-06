@@ -1,12 +1,11 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export default function Page() {
-  const [userId, setUserId] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
@@ -17,43 +16,50 @@ export default function Page() {
     setError("");
 
     try {
-      const res: any = await signIn("credentials", {
-        redirect: false,
-        user_id: userId.toLowerCase(),
-        password: password,
-        tenant: "BUYER",
+      const res: any = await fetch("/api/buyer-signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "appplication/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
       });
 
-      console.log("res", res);
+      const data = await res.json();
+      
+      console.log("res", data);
       if (!res?.error) {
         toast.success("success!");
-        router.push("/dashboard"); // Redirect to dashboard or another page
+        // router.push("/"); // Redirect to dashboard or another page
       } else {
-        setError("Invalid user_id or password!");
+        setError("Invalid email or password!");
         toast.error("Invalid credentials!");
       }
     } catch (error) {
       setError("Failed to log in. Please try again.");
+      console.log("error", error);
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-black">
       <div className="w-full max-w-md p-8 space-y-6 bg-gray-900 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-center text-white">Login</h1>
+        <h1 className="text-3xl font-bold text-center text-white">Sign up</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
               htmlFor="email"
               className="block text-sm font-medium text-white"
             >
-              User Id
+              Email
             </label>
             <input
-              type="user_id"
-              id="user_id"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full px-3 py-2 mt-1 text-white bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring focus:ring-gray-600"
             />
@@ -79,7 +85,7 @@ export default function Page() {
             type="submit"
             className="w-full py-2 text-sm font-medium text-black bg-white rounded-md hover:bg-gray-300 focus:outline-none focus:ring focus:ring-gray-600"
           >
-            Login
+            Signup
           </button>
         </form>
       </div>
