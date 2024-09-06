@@ -18,7 +18,12 @@ export async function middleware(request: NextRequest) {
   const userTenant = session?.user?.tenant;
 
   if (BUYER_HOSTNAMES.has(domain)) {
-    if (!isLoggedIn && fullPath !== "/login" && fullPath !== "/signup") {
+    if (
+      !isLoggedIn &&
+      fullPath !== "/login" &&
+      fullPath !== "/register" &&
+      fullPath !== "/sign"
+    ) {
       return NextResponse.redirect(loginUrl);
     }
     if (isLoggedIn && fullPath === "/login") {
