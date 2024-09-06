@@ -22,7 +22,7 @@ export async function middleware(request: NextRequest) {
       !isLoggedIn &&
       fullPath !== "/login" &&
       fullPath !== "/register" &&
-      fullPath !== "/sign"
+      fullPath !== "/signup"
     ) {
       return NextResponse.redirect(loginUrl);
     }

@@ -23,10 +23,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const buyerSchema = z.object({
   user_id: z.string().min(3, "User ID must be at least 3 characters"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  // password: z.string().min(8, "Password must be at least 8 characters").optional(),
   email: z.string().email("Invalid email address"),
   businessName: z
     .string()
@@ -58,11 +60,13 @@ const buyerSchema = z.object({
 });
 
 export function BuyerRegistrationForm() {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof buyerSchema>>({
     resolver: zodResolver(buyerSchema),
     defaultValues: {
       user_id: "",
-      password: "",
+      // password: "",
       email: "",
       businessName: "",
       address: "",
@@ -82,9 +86,30 @@ export function BuyerRegistrationForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof buyerSchema>) {
-    console.log(values);
-    // Here you would typically send the data to your API
+  async function onSubmit(values: z.infer<typeof buyerSchema>) { 
+    try {
+      console.log("values", values)
+      const res: any = await fetch("/api/buyer-signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "appplication/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      const data = await res.json();
+      
+      console.log("res", data);
+      if (!res?.error) {
+        toast.success("success!");
+        router.push("/"); // Redirect to dashboard or another page
+      } else {
+        toast.error("Invalid credentials!");
+      }
+    } catch (error) {
+      console.log("error", error);
+      toast.error("Error: ", error);
+    }
   }
 
   return (
@@ -104,19 +129,6 @@ export function BuyerRegistrationForm() {
                   <FormLabel>User ID</FormLabel>
                   <FormControl>
                     <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

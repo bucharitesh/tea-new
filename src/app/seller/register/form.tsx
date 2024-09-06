@@ -1,3 +1,5 @@
+'use client';
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,10 +23,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const sellerSchema = z.object({
   user_id: z.string().min(3, "User ID must be at least 3 characters"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  // password: z.string().min(8, "Password must be at least 8 characters"),
   email: z.string().email("Invalid email address").optional().or(z.literal("")),
   businessName: z
     .string()
@@ -57,11 +61,13 @@ const sellerSchema = z.object({
 });
 
 export function SellerRegistrationForm() {
+  const router = useRouter();
+  
   const form = useForm<z.infer<typeof sellerSchema>>({
     resolver: zodResolver(sellerSchema),
     defaultValues: {
       user_id: "",
-      password: "",
+      // password: "",
       email: "",
       businessName: "",
       address: "",
@@ -81,9 +87,29 @@ export function SellerRegistrationForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof sellerSchema>) {
-    console.log(values);
-    // Here you would typically send the data to your API
+  async function onSubmit(values: z.infer<typeof sellerSchema>) {
+    try {
+      const res: any = await fetch("/api/seller-signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "appplication/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      const data = await res.json();
+      
+      console.log("res", data);
+      if (!res?.error) {
+        toast.success("success!");
+        router.push("/"); // Redirect to dashboard or another page
+      } else {
+        toast.error("Invalid credentials!");
+      }
+    } catch (error) {
+      console.log("error", error);
+      toast.error("Error: ", error);
+    }
   }
 
   return (
@@ -103,19 +129,6 @@ export function SellerRegistrationForm() {
                   <FormLabel>User ID</FormLabel>
                   <FormControl>
                     <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
