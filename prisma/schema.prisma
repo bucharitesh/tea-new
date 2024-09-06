@@ -23,8 +23,8 @@ enum ApprovalStatus {
 model Buyer {
   id                 String         @id @default(auto()) @map("_id") @db.ObjectId
   user_id            String         @unique
-  email              String?         
   password           String
+  email              String?         
   businessName       String?
   address            String?
   pincode            String?

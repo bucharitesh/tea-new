@@ -11,59 +11,97 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
-    maxAge: 10 * 24 * 60 * 60, // 10 days in seconds
   },
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialProvider({
       credentials: {
-        user_id: { label: "Email", type: "text" },
+        user_id: { label: "user_id", type: "text" },
         password: { label: "Password", type: "password" },
         tenant: { label: "Tenant", type: "text" },
       },
       async authorize(credentials) {
+        if (!credentials || !credentials.user_id || !credentials.password) {
+          return null;
+        }
+
+        const user_id = credentials.user_id as string;
+
         let user: any;
 
         if (credentials?.tenant === "ADMIN") {
-          if (
-            credentials?.user_id === "admin" &&
-            credentials?.password === "plmplmplm"
-          ) {
-            user = {
-              user_id: credentials?.user_id,
-              tenant: "ADMIN",
-            };
-            return user;
-          }
-
-          return null;
-        }
-
-        // if (
-        //   credentials?.email === "pranav@gmail.com" &&
-        //   credentials?.password === "plmplmplm"
-        // ) {
-        //   user = {
-        //     email: credentials?.email,
-        //     tenant: "BUYER",
-        //   };
-        //   return user;
-        // }
-
-        // return null;
-        if (credentials?.tenant === "BUYER") {
-          user = await prisma.buyer.findUnique({
-            where: { user_id: credentials?.user_id as string },
+          // Search user in admin table
+          user = await prisma.admin.findUnique({
+            where: { user_id },
           });
 
-          if (user && user.password && credentials?.password) {
-            if (String(credentials.password) === String(user.password)) {
-              return user;
+          // check if user exists in admin table and password is correct
+          if (user) {
+            const isMatch = (credentials.password as string) === user.password;
+
+            console.log(isMatch);
+
+            if (!isMatch) {
+              throw new Error("Incorrect password.");
             }
+
+            return {
+              user_id: user.user_id,
+              tenant: "ADMIN",
+            };
           }
+
           return null;
         }
 
+        if (credentials?.tenant === "BUYER") {
+          user = await prisma.buyer.findUnique({
+            where: { user_id },
+          });
+
+          if (user) {
+            const isMatch = (credentials.password as string) === user.password;
+
+            if (!isMatch) {
+              throw new Error("Incorrect password.");
+            }
+
+            return {
+              ...user,
+              tenant: "BUYER",
+            };
+          }
+
+          return null;
+        }
+
+        if (credentials?.tenant === "SELLER") {
+          user = await prisma.seller.findUnique({
+            where: { user_id },
+          });
+
+          if (user) {
+            // const isMatch = bcrypt.compareSync(
+            //   credentials.password as string,
+            //   user.hashedPassword
+            // );
+
+            const isMatch = (credentials.password as string) === user.password;
+
+            if (!isMatch) {
+              throw new Error("Incorrect password.");
+            }
+
+            return {
+              ...user,
+              tenant: "SELLER",
+            };
+          }
+
+          return null;
+        }
+
+        return null;
       },
     }),
   ],
