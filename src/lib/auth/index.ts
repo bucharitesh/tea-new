@@ -17,7 +17,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   providers: [
     CredentialProvider({
       credentials: {
-        email: { label: "Email", type: "text" },
+        user_id: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
         tenant: { label: "Tenant", type: "text" },
       },
@@ -26,11 +26,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         if (credentials?.tenant === "ADMIN") {
           if (
-            credentials?.email === "bucha@gmail.com" &&
+            credentials?.user_id === "admin" &&
             credentials?.password === "plmplmplm"
           ) {
             user = {
-              email: credentials?.email,
+              user_id: credentials?.user_id,
               tenant: "ADMIN",
             };
             return user;
@@ -40,11 +40,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         }
 
         if (
-          credentials?.email === "pranav@gmail.com" &&
+          credentials?.user_id === "buyer" &&
           credentials?.password === "plmplmplm"
         ) {
           user = {
-            email: credentials?.email,
+            user_id: credentials?.user_id,
             tenant: "BUYER",
           };
           return user;
