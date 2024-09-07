@@ -11,7 +11,7 @@ const Sidebar = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (activeTabFromParams && activeTab !== activeTabFromParams) {
+    if (!activeTabFromParams || activeTab !== activeTabFromParams) {
         const newUrl = `/dashboard?tab=${activeTab}`;
         router.push(newUrl);  // Updates the URL with the new tab without a page reload
       }
