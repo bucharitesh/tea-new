@@ -21,59 +21,59 @@ enum ApprovalStatus {
 }
 
 model Buyer {
-  id                 String         @id @default(auto()) @map("_id") @db.ObjectId
-  user_id            String         @unique
-  password           String?
-  email              String         
-  businessName       String
-  address            String
-  pincode            String
-  district           String
-  state              String
-  name               String
-  contactNo          String
-  alternateContactNo String
-  panNo              String
-  gstNo              String
-  fssaiNo            String
-  tmcoNo             String
-  bankAccountNo      String
-  ifscCode           String
-  nameOfTransport    String
-  isApproved         ApprovalStatus @default(INITIALISED)
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  id                      String         @id @default(auto()) @map("_id") @db.ObjectId
+  user_id                 String         @unique
+  password                String?
+  email                   String         
+  businessName            String
+  address                 String
+  pincode                 String
+  district                String
+  state                   String
+  name                    String
+  contactNo               String
+  alternateContactNo      String
+  panNo                   String
+  gstNo                   String
+  fssaiNo                 String
+  tmcoNo                  String
+  bankAccountNo           String
+  ifscCode                String
+  nameOfTransport         String
+  isApproved            ApprovalStatus @default(INITIALISED)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
 }
 
 model Seller {
-  id                 String         @id @default(auto()) @map("_id") @db.ObjectId
-  user_id            String         @unique
-  password           String?
-  email              String  
-  businessName       String
-  address            String
-  pincode            String
-  district           String
-  state              String
-  name               String
-  contactNo          String
-  alternateContactNo String
-  panNo              String
-  gstNo              String
-  fssaiNo            String
-  tmcoNo             String
-  bankAccountNo      String
-  ifscCode           String
-  nameOfTransport    String
-  isApproved         ApprovalStatus @default(INITIALISED)
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  id                      String         @id @default(auto()) @map("_id") @db.ObjectId
+  user_id                 String         @unique
+  password                String?
+  email                   String  
+  businessName            String
+  address                 String
+  pincode                 String
+  district                String
+  state                   String
+  name                    String
+  contactNo               String
+  alternateContactNo      String
+  panNo                   String
+  gstNo                   String
+  fssaiNo                 String
+  tmcoNo                  String
+  bankAccountNo           String
+  ifscCode                String
+  nameOfTransport         String
+  verification_status     ApprovalStatus @default(INITIALISED)
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
 }
 
 model Admin {
-  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
-  user_id            String   @unique
-  password           String
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  id                      String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_id                 String   @unique
+  password                String  
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 }
