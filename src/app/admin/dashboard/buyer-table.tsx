@@ -37,7 +37,7 @@ type Buyer = {
   businessName: string;
   email: string;
   contactNo: string;
-  verification_status: "APPROVED" | "REJECTED" | "INITIALISED" | "PENDING";
+  verification_status: "VERIFIED" | "REJECTED" | "INITIALISED" | "PENDING";
   address: string;
   pincode: string;
   district: string;
@@ -124,8 +124,8 @@ export function BuyerTable() {
 
       const updatedBuyer = await response.json();
 
-      if (newStatus === "APPROVED" && updatedBuyer.password) {
-        alert(`Buyer approved. Generated password: ${updatedBuyer.password}`);
+      if (newStatus === "VERIFIED" && updatedBuyer.password) {
+        alert(`Buyer VERIFIED. Generated password: ${updatedBuyer.password}`);
       }
 
       mutate();
@@ -199,7 +199,7 @@ export function BuyerTable() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="PENDING">Pending</SelectItem>
-            <SelectItem value="APPROVED">Approved</SelectItem>
+            <SelectItem value="VERIFIED">Verified</SelectItem>
             <SelectItem value="REJECTED">Rejected</SelectItem>
             <SelectItem value="ALL">All</SelectItem>
           </SelectContent>
@@ -317,7 +317,7 @@ export function BuyerTable() {
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="APPROVED">Approved</SelectItem>
+                  <SelectItem value="VERIFIED">Verified</SelectItem>
                   <SelectItem value="PENDING">Pending</SelectItem>
                   <SelectItem value="REJECTED">Rejected</SelectItem>
                 </SelectContent>

@@ -68,8 +68,8 @@ export async function PATCH(req: Request) {
       },
     });
 
-    // Generate password if status is changed to APPROVED
-    if (status === "APPROVED") {
+    // Generate password if status is changed to VERIFIED
+    if (status === "VERIFIED") {
       const password = Math.random().toString(36).slice(-8);
       await prisma.seller.update({
         where: { id },

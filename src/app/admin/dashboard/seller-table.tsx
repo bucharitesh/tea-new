@@ -37,7 +37,7 @@ type Seller = {
   businessName: string;
   email: string;
   contactNo: string;
-  verification_status: "APPROVED" | "REJECTED" | "INITIALISED";
+  verification_status: "VERIFIED" | "REJECTED" | "INITIALISED";
   address: string;
   pincode: string;
   district: string;
@@ -124,8 +124,8 @@ export function SellerTable() {
 
       const updatedSeller = await response.json();
 
-      if (newStatus === "APPROVED" && updatedSeller.password) {
-        alert(`Seller approved. Generated password: ${updatedSeller.password}`);
+      if (newStatus === "VERIFIED" && updatedSeller.password) {
+        alert(`Seller Verified. Generated password: ${updatedSeller.password}`);
       }
 
       mutate();
@@ -199,7 +199,7 @@ export function SellerTable() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="INITIALISED">Pending</SelectItem>
-            <SelectItem value="APPROVED">Approved</SelectItem>
+            <SelectItem value="VERIFIED">Verified</SelectItem>
             <SelectItem value="REJECTED">Rejected</SelectItem>
             <SelectItem value="ALL">All</SelectItem>
           </SelectContent>
@@ -323,7 +323,7 @@ export function SellerTable() {
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="APPROVED">Approved</SelectItem>
+                  <SelectItem value="VERIFIED">Verified</SelectItem>
                   <SelectItem value="REJECTED">Rejected</SelectItem>
                   <SelectItem value="PENDING">Pending</SelectItem>
                 </SelectContent>
