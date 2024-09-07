@@ -34,8 +34,8 @@ export async function PATCH(request: Request, context: any) {
         user_id: user_id,
       },
       data: {
-        isApproved: action,
-        password
+        verification_status: action,
+        password,
       },
     });
 

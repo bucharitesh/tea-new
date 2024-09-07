@@ -56,7 +56,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         if (credentials?.tenant === "BUYER") {
           user = await prisma.buyer.findUnique({
-            where: { user_id, isApproved: 'VERIFIED' },
+            where: { user_id, verification_status: "VERIFIED" },
           });
 
           if (user) {
@@ -77,7 +77,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         if (credentials?.tenant === "SELLER") {
           user = await prisma.seller.findUnique({
-            where: { user_id, isApproved: "VERIFIED" },
+            where: { user_id, verification_status: "VERIFIED" },
           });
 
           if (user) {

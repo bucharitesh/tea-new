@@ -1,22 +1,23 @@
-import UserCard from "@/components/admin/UserCard";
-import { PrismaClient } from "@prisma/client";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BuyerTable } from "./buyer-table";
+import { SellerTable } from "./seller-table";
 
-const prisma = new PrismaClient();
-
-const Page = async () => {
-  const buyers = await prisma.buyer.findMany();
-
+export default function AdminDashboard() {
   return (
-    <div className="h-screen w-full px-12 py-8">
-      {buyers && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {buyers.map((user: any) => {
-              return <UserCard user={user} />;
-          })}
-        </div>
-      )}
+    <div className="container mx-auto py-10">
+      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+      <Tabs defaultValue="buyers">
+        <TabsList>
+          <TabsTrigger value="buyers">Buyers</TabsTrigger>
+          <TabsTrigger value="sellers">Sellers</TabsTrigger>
+        </TabsList>
+        <TabsContent value="buyers">
+          <BuyerTable />
+        </TabsContent>
+        <TabsContent value="sellers">
+          <SellerTable />
+        </TabsContent>
+      </Tabs>
     </div>
   );
-};
-
-export default Page;
+}

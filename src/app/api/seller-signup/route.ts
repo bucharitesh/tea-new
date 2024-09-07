@@ -78,7 +78,7 @@ export async function POST(request: Request, context: any) {
         bankAccountNo,
         ifscCode,
         nameOfTransport,
-        isApproved: "INITIALISED",
+        verification_status: "INITIALISED",
       },
     });
 
