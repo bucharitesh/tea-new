@@ -35,7 +35,7 @@ export const sendEmail = async ({
 
   return resend.emails.send({
     to: email,
-    from: from || "Ritesh Bucha <me@bucharitesh.in>",
+    from: from || "Pranav Yellayi <pranav.yellayi@flamapp.com>",
     bcc: bcc,
     ...(!replyToFromEmail && {
       replyTo: "contact@bucharitesh.in",

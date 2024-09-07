@@ -1,5 +1,7 @@
 // app/api/buyers/route.ts
 import { PrismaClient } from "@prisma/client";
+import { sendEmail } from "emails";
+import WelcomeEmail from "emails/welcome-email";
 import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
@@ -59,7 +61,7 @@ export async function GET(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
-    const { id, status, updatedFields } = await req.json();
+    const { id, status, updatedFields, email } = await req.json();
     const updatedBuyer = await prisma.buyer.update({
       where: { id },
       data: {
@@ -76,6 +78,22 @@ export async function PATCH(req: Request) {
         data: { password: password },
       });
       updatedBuyer.password = password;
+
+      const mailRes: any = await sendEmail({
+        email,
+        subject: "subject",
+        from: "pranav.yellayi@flamapp.com",
+        text: "Hi there! testing",
+        react: WelcomeEmail({ email }),
+      });
+
+      console.log("mailres", mailRes);
+
+      const { error } = mailRes;
+
+      if (error) {
+        return NextResponse.json({ status: 500 });
+      }
     }
 
     return NextResponse.json(updatedBuyer);

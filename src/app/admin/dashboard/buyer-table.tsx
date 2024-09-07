@@ -109,6 +109,7 @@ export function BuyerTable() {
         body: JSON.stringify({
           id: editedBuyer.id,
           status: newStatus,
+          email: editedBuyer.email,
           updatedFields: Object.fromEntries(
             Array.from(editedFields).map((field) => [
               field,
