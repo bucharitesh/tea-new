@@ -22,7 +22,6 @@ export async function middleware(request: NextRequest) {
       !isLoggedIn &&
       fullPath !== "/login" &&
       fullPath !== "/register" &&
-      fullPath !== "/signup"
     ) {
       return NextResponse.redirect(loginUrl);
     }

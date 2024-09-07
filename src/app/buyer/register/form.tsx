@@ -89,7 +89,7 @@ export function BuyerRegistrationForm() {
   async function onSubmit(values: z.infer<typeof buyerSchema>) { 
     try {
       console.log("values", values)
-      const res: any = await fetch("/api/buyer-signup", {
+      const res: any = await fetch("/api/register/buyer", {
         method: "POST",
         headers: {
           "Content-Type": "appplication/json",
