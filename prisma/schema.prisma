@@ -95,11 +95,11 @@ model Product {
 }
 
 type ProductScore {
-  appearance  Float?
-  taste       Float?
-  liquor      Float?
-  infusion    Float?
-  grading     Float?
+  appearance  Float
+  taste       Float
+  liquor      Float
+  infusion    Float
+  grading     Float
 }
 
 enum ProductGrade {
