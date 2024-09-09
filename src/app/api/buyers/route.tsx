@@ -82,7 +82,6 @@ export async function PATCH(req: Request) {
       const mailRes: any = await sendEmail({
         email,
         subject: "subject",
-        from: "pranav.yellayi@flamapp.com",
         text: "Hi there! testing",
         react: WelcomeEmail({ email }),
       });
