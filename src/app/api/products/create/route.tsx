@@ -17,8 +17,8 @@ export async function GET(request: Request) {
         search
           ? {
               OR: [
-                { invoiceNo: { contains: search } },
-                { grade: { contains: search } },
+                // { invoiceNo: { contains: search } },
+                // { grade: { contains: search } },
                 { verification_status: { contains: search } },
               ],
             }
@@ -50,7 +50,6 @@ export async function POST(request: Request) {
         division: body.division,
       },
     });
-
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
     console.error("Failed to create product:", error);

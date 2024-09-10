@@ -18,11 +18,7 @@ export async function middleware(request: NextRequest) {
   const userTenant = session?.user?.tenant;
 
   if (BUYER_HOSTNAMES.has(domain)) {
-    if (
-      !isLoggedIn &&
-      fullPath !== "/login" &&
-      fullPath !== "/register"
-    ) {
+    if (!isLoggedIn && fullPath !== "/login" && fullPath !== "/register") {
       return NextResponse.redirect(loginUrl);
     }
     if (isLoggedIn && fullPath === "/login") {
@@ -32,7 +28,11 @@ export async function middleware(request: NextRequest) {
   }
 
   if (SELLER_HOSTNAMES.has(domain)) {
-    if ((!isLoggedIn || userTenant !== "SELLER") && fullPath !== "/login" && fullPath !== "/register") {
+    if (
+      (!isLoggedIn || userTenant !== "SELLER") &&
+      fullPath !== "/login" &&
+      fullPath !== "/register"
+    ) {
       return NextResponse.redirect(loginUrl);
     }
     if (isLoggedIn && userTenant === "SELLER" && fullPath === "/login") {

@@ -47,17 +47,12 @@ export async function POST(request: Request, context: any) {
       !ifscCode ||
       !nameOfTransport
     ) {
+      console.log("test")
       return NextResponse.json(
         { message: "Missing required fields" },
         { status: 400 }
       );
     }
-
-    // Generate buyerId using some logic based on primary key (e.g., auto-generated ID)
-    const lastRecord = await prisma.seller.findMany({
-      orderBy: { id: "desc" },
-      take: 1,
-    });
 
     const business = await prisma.seller.create({
       data: {
