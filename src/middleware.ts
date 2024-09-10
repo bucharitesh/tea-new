@@ -32,10 +32,8 @@ export async function middleware(request: NextRequest) {
   }
 
   if (SELLER_HOSTNAMES.has(domain)) {
-    if (!isLoggedIn || userTenant !== "SELLER") {
-      if (fullPath !== "/login") {
-        return NextResponse.redirect(loginUrl);
-      }
+    if ((!isLoggedIn || userTenant !== "SELLER") && fullPath !== "/login" && fullPath !== "/register") {
+      return NextResponse.redirect(loginUrl);
     }
     if (isLoggedIn && userTenant === "SELLER" && fullPath === "/login") {
       return NextResponse.redirect(dashboardUrl);
@@ -44,10 +42,12 @@ export async function middleware(request: NextRequest) {
   }
 
   if (ADMIN_HOSTNAMES.has(domain)) {
-    if (!isLoggedIn || userTenant !== "ADMIN") {
-      if (fullPath !== "/login") {
-        return NextResponse.redirect(loginUrl);
-      }
+    if (
+      (!isLoggedIn || userTenant !== "ADMIN") &&
+      fullPath !== "/login" &&
+      fullPath !== "/register"
+    ) {
+      return NextResponse.redirect(loginUrl);
     }
     if (isLoggedIn && userTenant === "ADMIN" && fullPath === "/login") {
       return NextResponse.redirect(dashboardUrl);
