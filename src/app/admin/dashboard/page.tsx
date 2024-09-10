@@ -2,6 +2,7 @@ import Sidebar from "@/components/admin/sidebar"; // Assuming Sidebar is in the 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BuyerTable } from "./buyer-table";
 import { SellerTable } from "./seller-table";
+import ProductPage from "./products";
 
 export default function AdminDashboard({
   searchParams,
@@ -34,9 +35,7 @@ export default function AdminDashboard({
         </div>
       )}
       {searchParams?.tab === "product" && (
-        <div className="flex-grow p-10">
-          PRODUCTS
-        </div>
+        <ProductPage />
       )}
       {searchParams?.tab === "extra" && (
         <div className="flex-grow p-10">
