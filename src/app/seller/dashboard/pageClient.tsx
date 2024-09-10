@@ -62,9 +62,13 @@ const ProductTable = ({ data }) => {
       <Table {...getTableProps()}>
         <TableHeader>
           {headerGroups.map((headerGroup) => (
-            <TableRow {...headerGroup.getHeaderGroupProps()}>
+            <TableRow
+              key={headerGroup.id}
+              {...headerGroup.getHeaderGroupProps()}
+            >
               {headerGroup.headers.map((column) => (
                 <TableHead
+                  key={column.id}
                   {...column.getHeaderProps(column.getSortByToggleProps())}
                 >
                   {column.render("Header")}
@@ -84,9 +88,9 @@ const ProductTable = ({ data }) => {
           {rows.map((row) => {
             prepareRow(row);
             return (
-              <TableRow {...row.getRowProps()}>
+              <TableRow key={row.id} {...row.getRowProps()}>
                 {row.cells.map((cell) => (
-                  <TableCell {...cell.getCellProps()}>
+                  <TableCell key={cell.id} {...cell.getCellProps()}>
                     {cell.render("Cell")}
                   </TableCell>
                 ))}
