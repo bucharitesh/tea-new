@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -14,7 +15,7 @@ import { useSession } from "next-auth/react";
 import { useMemo } from "react";
 import { useGlobalFilter, useSortBy, useTable } from "react-table";
 import useSWR from "swr";
-import CreateProductForm from "./form";
+import EditProductForm from "./edit-product-form";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -62,13 +63,9 @@ const ProductTable = ({ data }) => {
       <Table {...getTableProps()}>
         <TableHeader>
           {headerGroups.map((headerGroup) => (
-            <TableRow
-              key={headerGroup.id}
-              {...headerGroup.getHeaderGroupProps()}
-            >
+            <TableRow {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
                 <TableHead
-                  key={column.id}
                   {...column.getHeaderProps(column.getSortByToggleProps())}
                 >
                   {column.render("Header")}
@@ -88,18 +85,20 @@ const ProductTable = ({ data }) => {
           {rows.map((row) => {
             prepareRow(row);
             return (
-              <TableRow key={row.id} {...row.getRowProps()}>
-                {row.cells.map((cell) => (
-                  <TableCell key={cell.id} {...cell.getCellProps()}>
-                    {cell.getCellProps().key.split("_")[
+              <TableRow {...row.getRowProps()}>
+                {row.cells.map((cell) => {
+                  return (
+                    <TableCell {...cell.getCellProps()}>
+                      {cell.getCellProps().key.split("_")[
                         cell.getCellProps().key.split("_").length - 1
-                      ] === "status" && cell.value === "VERIFIED" ? (
-                        <p className="text-green-600 font-bold">PRODUCT LIVE</p>
+                      ] === "status" ? (
+                        <EditProductForm productData={row.original} />
                       ) : (
                         cell.render("Cell")
                       )}
-                  </TableCell>
-                ))}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             );
           })}
@@ -117,10 +116,10 @@ const TableSkeleton = () => (
   </div>
 );
 
-const PageClient = () => {
+const ProductPage = () => {
   const session = useSession();
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/products/${session?.data?.user?.user_id}`,
+    `/api/products/all?tenant=admin`,
     fetcher
   );
 
@@ -132,10 +131,9 @@ const PageClient = () => {
     );
 
   return (
-    <div className="flex flex-col w-full text-lg">
+    <div className="flex flex-col w-full text-lg p-8">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">Your Products</h2>
-        <CreateProductForm sellerId={session?.data?.user?.user_id as string} />
+        <h2 className="text-2xl font-bold">Products Listed</h2>
       </div>
       {isLoading ? (
         <TableSkeleton />
@@ -148,4 +146,4 @@ const PageClient = () => {
   );
 };
 
-export default PageClient;
+export default ProductPage;

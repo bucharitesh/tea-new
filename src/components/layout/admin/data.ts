@@ -12,10 +12,10 @@ export const adminNavItems: any[] = [
     label: 'user'
   },
   {
-    title: 'Employee',
-    href: '/dashboard/employee',
-    icon: 'employee',
-    label: 'employee'
+    title: 'Products',
+    href: '/dashboard/products',
+    icon: 'products',
+    label: 'products'
   },
   {
     title: 'Profile',
