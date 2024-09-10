@@ -30,22 +30,7 @@ export async function POST(request: Request, context: any) {
     // Validate required fields
     if (
       !user_id ||
-      !email ||
-      !businessName ||
-      !address ||
-      !pincode ||
-      !district ||
-      !state ||
-      !name ||
-      !contactNo ||
-      !alternateContactNo ||
-      !panNo ||
-      !gstNo ||
-      !fssaiNo ||
-      !tmcoNo ||
-      !bankAccountNo ||
-      !ifscCode ||
-      !nameOfTransport
+      !email
     ) {
       return NextResponse.json(
         { message: "Missing required fields" },
