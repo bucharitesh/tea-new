@@ -3,6 +3,7 @@
 import { Shell } from "./shell";
 import { AppTabs } from "./app-tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CartSheet } from "@/cart/cart-components";
 // import { UserNav } from "./user-nav";
 
 export function AppHeader() {
@@ -14,10 +15,9 @@ export function AppHeader() {
           <div className="flex items-center gap-1">
             <div className="relative">
               <Skeleton className="h-8 w-8 rounded-full" />
-              <div className="absolute inset-0">
-                {/* <UserNav /> */}
-              </div>
+              <div className="absolute inset-0">{/* <UserNav /> */}</div>
             </div>
+            <CartSheet />
           </div>
         </div>
         <AppTabs />

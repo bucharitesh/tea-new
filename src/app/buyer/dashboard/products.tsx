@@ -1,5 +1,6 @@
 "use client";
 
+import { AddToCartForm } from "@/cart/cart-components";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -34,6 +35,27 @@ const ProductTable = ({ data }) => {
         Cell: ({ value }) => (value ? "Yes" : "No"),
       },
       { Header: "Verification Status", accessor: "verification_status" },
+      {
+        Header: "Add to Cart",
+        accessor: "addToCart",
+        Cell: ({ row }) => (
+          <AddToCartForm
+            product={{
+              id: row.original.id,
+              sellerId: row.original.sellerId,
+              invoiceNo: row.original.invoiceNo,
+              grade: row.original.grade,
+              pkgs: row.original.pkgs,
+              kgPerBag: row.original.kgPerBag,
+              sampleUsed: row.original.sampleUsed,
+              price: row.original.price,
+              division: row.original.division,
+              verification_status: row.original.verification_status,
+              score: row.original.score,
+            }}
+          />
+        ),
+      },
     ],
     []
   );
