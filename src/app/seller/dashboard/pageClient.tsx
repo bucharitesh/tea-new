@@ -57,7 +57,7 @@ const ProductTable = ({ data }) => {
         value={globalFilter || ""}
         onChange={(e) => setGlobalFilter(e.target.value)}
         placeholder="Search all columns..."
-        className="mb-4"
+        className="mb-4 max-w-md"
       />
       <Table {...getTableProps()}>
         <TableHeader>
@@ -92,12 +92,12 @@ const ProductTable = ({ data }) => {
                 {row.cells.map((cell) => (
                   <TableCell key={cell.id} {...cell.getCellProps()}>
                     {cell.getCellProps().key.split("_")[
-                        cell.getCellProps().key.split("_").length - 1
-                      ] === "status" && cell.value === "VERIFIED" ? (
-                        <p className="text-green-600 font-bold">PRODUCT LIVE</p>
-                      ) : (
-                        cell.render("Cell")
-                      )}
+                      cell.getCellProps().key.split("_").length - 1
+                    ] === "status" && cell.value === "VERIFIED" ? (
+                      <p className="text-green-600 font-bold">PRODUCT LIVE</p>
+                    ) : (
+                      cell.render("Cell")
+                    )}
                   </TableCell>
                 ))}
               </TableRow>

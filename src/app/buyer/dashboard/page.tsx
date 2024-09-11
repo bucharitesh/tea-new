@@ -1,4 +1,4 @@
-import { Header } from "@/components/layout/buyer/header";
+import { Header } from "@/components/layout/header";
 import ProductPage from "./products";
 
 const Page = () => {

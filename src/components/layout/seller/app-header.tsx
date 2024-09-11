@@ -1,7 +1,6 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { CartSheet } from "@/cart/cart-components";
 import { Shell } from "../shell";
 import { AppTabs } from "./app-tabs";
 // import { UserNav } from "./user-nav";
@@ -17,7 +16,6 @@ export function AppHeader() {
               <Skeleton className="h-8 w-8 rounded-full" />
               <div className="absolute inset-0">{/* <UserNav /> */}</div>
             </div>
-            <CartSheet />
           </div>
         </div>
         <AppTabs />

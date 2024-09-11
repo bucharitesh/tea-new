@@ -19,7 +19,7 @@ function Header({ title, description, className, actions }: HeaderProps) {
       )}
     >
       <div className="flex min-w-0 flex-col gap-1">
-        <h1 className="font-cal text-3xl">{title}</h1>
+        <h1 className="font-bold text-3xl">{title}</h1>
         {typeof description === "string" ? (
           <p className="text-muted-foreground">{description}</p>
         ) : (
