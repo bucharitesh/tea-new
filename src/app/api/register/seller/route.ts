@@ -47,7 +47,26 @@ export async function POST(request: Request, context: any) {
       !ifscCode ||
       !nameOfTransport
     ) {
-      console.log("test")
+      console.log(
+        "test",
+        user_id,
+        email,
+        businessName,
+        address,
+        pincode,
+        district,
+        state,
+        name,
+        contactNo,
+        alternateContactNo,
+        panNo,
+        gstNo,
+        fssaiNo,
+        tmcoNo,
+        bankAccountNo,
+        ifscCode,
+        nameOfTransport
+      );
       return NextResponse.json(
         { message: "Missing required fields" },
         { status: 400 }

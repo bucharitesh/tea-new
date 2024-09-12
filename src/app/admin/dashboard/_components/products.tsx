@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -12,10 +11,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useSession } from "next-auth/react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useGlobalFilter, useSortBy, useTable } from "react-table";
 import useSWR from "swr";
 import EditProductForm from "./edit-product-form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Product } from "@prisma/client";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -58,7 +59,7 @@ const ProductTable = ({ data }) => {
         value={globalFilter || ""}
         onChange={(e) => setGlobalFilter(e.target.value)}
         placeholder="Search all columns..."
-        className="mb-4"
+        className="mb-4 w-1/4"
       />
       <Table {...getTableProps()}>
         <TableHeader>
@@ -118,8 +119,12 @@ const TableSkeleton = () => (
 
 const ProductPage = () => {
   const session = useSession();
+
+  const [statusFilter, setStatusFilter] = useState<Product["verification_status"] | "ALL">(
+    "PENDING"
+  );
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/products/all?tenant=admin`,
+    `/api/products/all?tenant=admin&filter=${statusFilter}`,
     fetcher
   );
 
@@ -134,6 +139,23 @@ const ProductPage = () => {
     <div className="flex flex-col w-full text-lg p-8">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold">Products Listed</h2>
+      </div>
+
+      <div className="w-1/4 mb-2">
+        <Select
+          value={statusFilter}
+          onValueChange={(value) => setStatusFilter(value as Product["verification_status"])}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Filter by grade" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="PENDING">PENDING</SelectItem>
+            <SelectItem value="VERIFIED">VERIFIED</SelectItem>
+            <SelectItem value="REJECTED">REJECTED</SelectItem>
+            <SelectItem value="ALL">ALL</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       {isLoading ? (
         <TableSkeleton />

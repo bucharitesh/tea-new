@@ -2,6 +2,13 @@
 
 import { AddToCartForm } from "@/cart/cart-components";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -11,8 +18,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Product } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useGlobalFilter, useSortBy, useTable } from "react-table";
 import useSWR from "swr";
 
@@ -21,7 +29,6 @@ const fetcher = (url) => fetch(url).then((res) => res.json());
 const ProductTable = ({ data }) => {
   const columns = useMemo(
     () => [
-      { Header: "ID", accessor: "id" },
       { Header: "Seller ID", accessor: "sellerId" },
       { Header: "Invoice No", accessor: "invoiceNo" },
       { Header: "Grade", accessor: "grade" },
@@ -34,7 +41,6 @@ const ProductTable = ({ data }) => {
         accessor: "division",
         Cell: ({ value }) => (value ? "Yes" : "No"),
       },
-      { Header: "Verification Status", accessor: "verification_status" },
       {
         Header: "Add to Cart",
         accessor: "addToCart",
@@ -74,12 +80,14 @@ const ProductTable = ({ data }) => {
 
   return (
     <>
-      <Input
-        value={globalFilter || ""}
-        onChange={(e) => setGlobalFilter(e.target.value)}
-        placeholder="Search all columns..."
-        className="mb-4"
-      />
+      <div className="w-1/4 flex gap-2">
+        <Input
+          value={globalFilter || ""}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          placeholder="Search all columns..."
+          className="mb-4"
+        />
+      </div>
       <Table {...getTableProps()}>
         <TableHeader>
           {headerGroups.map((headerGroup) => (
@@ -132,8 +140,11 @@ const TableSkeleton = () => (
 
 const ProductPage = () => {
   const session = useSession();
+  const [statusFilter, setStatusFilter] = useState<Product["grade"] | "ALL">(
+    "ALL"
+  );
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/products/all?tenant=buyer`,
+    `/api/products/all?tenant=buyer&filter=${statusFilter}`,
     fetcher
   );
 
@@ -148,6 +159,22 @@ const ProductPage = () => {
     <div className="flex flex-col w-full text-lg p-8">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold">Products Listed</h2>
+      </div>
+      <div className="w-1/4 mb-2">
+        <Select
+          value={statusFilter}
+          onValueChange={(value) => setStatusFilter(value as Product["grade"])}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Filter by grade" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="A">A</SelectItem>
+            <SelectItem value="B">B</SelectItem>
+            <SelectItem value="C">C</SelectItem>
+            <SelectItem value="ALL">All</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       {isLoading ? (
         <TableSkeleton />
