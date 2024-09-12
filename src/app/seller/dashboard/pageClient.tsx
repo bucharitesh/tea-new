@@ -131,7 +131,7 @@ const PageClient = () => {
     "PENDING"
   );
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/products/${session?.data?.user?.user_id}`,
+    `/api/products/${session?.data?.user?.user_id}?filter=${statusFilter}`,
     fetcher
   );
 
