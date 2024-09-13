@@ -78,7 +78,7 @@ const productSchema = z.object({
 
 type ProductFormValues = z.infer<typeof productSchema>;
 
-const EditProductForm = ({ productData }: { productData: any }) => {
+const EditProductForm = ({ productData, mutate }: { productData: any; mutate: any; }) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   
@@ -93,6 +93,7 @@ const EditProductForm = ({ productData }: { productData: any }) => {
       price: productData?.price,
       division: productData?.division,
       verification_status: productData?.verification_status,
+      score: productData?.score ?? null,
     },
   });
 
@@ -142,6 +143,7 @@ const EditProductForm = ({ productData }: { productData: any }) => {
         setOpen(false);
         form.reset();
         router.refresh();
+        mutate();
       } else {
         toast.error(data.error || "Failed to update product");
       }

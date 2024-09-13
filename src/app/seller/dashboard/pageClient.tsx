@@ -128,7 +128,7 @@ const TableSkeleton = () => (
 const PageClient = () => {
   const session = useSession();
   const [statusFilter, setStatusFilter] = useState<Product["verification_status"] | "ALL">(
-    "PENDING"
+    "VERIFIED"
   );
   const { data, error, isLoading, mutate } = useSWR(
     `/api/products/${session?.data?.user?.user_id}?filter=${statusFilter}`,

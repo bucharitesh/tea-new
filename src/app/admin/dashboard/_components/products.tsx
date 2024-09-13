@@ -20,7 +20,7 @@ import { Product } from "@prisma/client";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
-const ProductTable = ({ data }) => {
+const ProductTable = ({ data, mutate }) => {
   const columns = useMemo(
     () => [
       { Header: "ID", accessor: "id" },
@@ -93,7 +93,7 @@ const ProductTable = ({ data }) => {
                       {cell.getCellProps().key.split("_")[
                         cell.getCellProps().key.split("_").length - 1
                       ] === "status" ? (
-                        <EditProductForm productData={row.original} />
+                        <EditProductForm productData={row.original} mutate={mutate} />
                       ) : (
                         cell.render("Cell")
                       )}
@@ -160,7 +160,7 @@ const ProductPage = () => {
       {isLoading ? (
         <TableSkeleton />
       ) : data && data.length > 0 ? (
-        <ProductTable data={data} />
+        <ProductTable data={data} mutate={mutate} />
       ) : (
         <p>No products found.</p>
       )}
