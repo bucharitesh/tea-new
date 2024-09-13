@@ -72,22 +72,10 @@ const ProductTable = ({ data }) => {
     headerGroups,
     rows,
     prepareRow,
-    state,
-    setGlobalFilter,
   } = useTable({ columns, data }, useGlobalFilter, useSortBy);
-
-  const { globalFilter } = state;
 
   return (
     <>
-      <div className="w-1/4 flex gap-2">
-        <Input
-          value={globalFilter || ""}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          placeholder="Search all columns..."
-          className="mb-4"
-        />
-      </div>
       <Table {...getTableProps()}>
         <TableHeader>
           {headerGroups.map((headerGroup) => (
@@ -126,6 +114,11 @@ const ProductTable = ({ data }) => {
           })}
         </TableBody>
       </Table>
+      {rows.length === 0 && (
+        <span className="text-black w-full text-sm flex items-center justify-center italic mt-4 grow h-[200px] bg-gray-100 rounded-xl">
+          No product is listed with the provided filters!
+        </span>
+      )}
     </>
   );
 };
@@ -143,8 +136,9 @@ const ProductPage = () => {
   const [statusFilter, setStatusFilter] = useState<Product["grade"] | "ALL">(
     "ALL"
   );
+  const [search, setSearch] = useState<string>("");
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/products/all?tenant=buyer&filter=${statusFilter}`,
+    `/api/products/all?tenant=buyer&filter=${statusFilter}&search=${search}`,
     fetcher
   );
 
@@ -160,7 +154,7 @@ const ProductPage = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold">Products Listed</h2>
       </div>
-      <div className="w-1/4 mb-2">
+      <div className="w-1/2 flex items-center gap-2 mb-4">
         <Select
           value={statusFilter}
           onValueChange={(value) => setStatusFilter(value as Product["grade"])}
@@ -175,14 +169,13 @@ const ProductPage = () => {
             <SelectItem value="ALL">All</SelectItem>
           </SelectContent>
         </Select>
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search ID..."
+        />
       </div>
-      {isLoading ? (
-        <TableSkeleton />
-      ) : data && data.length > 0 ? (
-        <ProductTable data={data} />
-      ) : (
-        <p>No products found.</p>
-      )}
+      {isLoading ? <TableSkeleton /> : <ProductTable data={data} />}
     </div>
   );
 };

@@ -10,6 +10,7 @@ export async function GET(request: Request, context: any) {
   const sortBy = searchParams.get("sortBy") || "createdAt";
   const sortOrder = searchParams.get("sortOrder") || "desc";
   const filters: any = searchParams.get("filter") || null;
+  const search: any = searchParams.get("search") || null;
 
   const products = await prisma.product.findMany({
     where: {
@@ -21,7 +22,7 @@ export async function GET(request: Request, context: any) {
     },
   });
 
-  console.log(products);
+  const filteredSearch = products.filter((each) => search && search !== "" ? each.sellerId.includes(search) : each);
 
-  return NextResponse.json(products);
+  return NextResponse.json(filteredSearch);
 }

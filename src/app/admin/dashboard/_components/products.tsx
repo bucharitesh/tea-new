@@ -1,6 +1,13 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -10,13 +17,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Product } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useMemo, useState } from "react";
 import { useGlobalFilter, useSortBy, useTable } from "react-table";
 import useSWR from "swr";
 import EditProductForm from "./edit-product-form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Product } from "@prisma/client";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -47,20 +53,10 @@ const ProductTable = ({ data, mutate }) => {
     headerGroups,
     rows,
     prepareRow,
-    state,
-    setGlobalFilter,
   } = useTable({ columns, data }, useGlobalFilter, useSortBy);
-
-  const { globalFilter } = state;
 
   return (
     <>
-      <Input
-        value={globalFilter || ""}
-        onChange={(e) => setGlobalFilter(e.target.value)}
-        placeholder="Search all columns..."
-        className="mb-4 w-1/4"
-      />
       <Table {...getTableProps()}>
         <TableHeader>
           {headerGroups.map((headerGroup) => (
@@ -93,7 +89,10 @@ const ProductTable = ({ data, mutate }) => {
                       {cell.getCellProps().key.split("_")[
                         cell.getCellProps().key.split("_").length - 1
                       ] === "status" ? (
-                        <EditProductForm productData={row.original} mutate={mutate} />
+                        <EditProductForm
+                          productData={row.original}
+                          mutate={mutate}
+                        />
                       ) : (
                         cell.render("Cell")
                       )}
@@ -105,6 +104,11 @@ const ProductTable = ({ data, mutate }) => {
           })}
         </TableBody>
       </Table>
+      {rows.length === 0 && (
+        <span className="text-black w-full text-sm flex items-center justify-center italic mt-4 grow h-[200px] bg-gray-100 rounded-xl">
+          No product is listed with the provided filters!
+        </span>
+      )}
     </>
   );
 };
@@ -120,11 +124,12 @@ const TableSkeleton = () => (
 const ProductPage = () => {
   const session = useSession();
 
-  const [statusFilter, setStatusFilter] = useState<Product["verification_status"] | "ALL">(
-    "PENDING"
-  );
+  const [statusFilter, setStatusFilter] = useState<
+    Product["verification_status"] | "ALL"
+  >("PENDING");
+  const [search, setSearch] = useState<string>("");
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/products/all?tenant=admin&filter=${statusFilter}`,
+    `/api/products/all?tenant=admin&filter=${statusFilter}&search=${search}`,
     fetcher
   );
 
@@ -141,10 +146,12 @@ const ProductPage = () => {
         <h2 className="text-2xl font-bold">Products Listed</h2>
       </div>
 
-      <div className="w-1/4 mb-2">
+      <div className="w-1/2 flex items-center gap-2 mb-4">
         <Select
           value={statusFilter}
-          onValueChange={(value) => setStatusFilter(value as Product["verification_status"])}
+          onValueChange={(value) =>
+            setStatusFilter(value as Product["verification_status"])
+          }
         >
           <SelectTrigger>
             <SelectValue placeholder="Filter by grade" />
@@ -156,13 +163,16 @@ const ProductPage = () => {
             <SelectItem value="ALL">ALL</SelectItem>
           </SelectContent>
         </Select>
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search ID..."
+        />
       </div>
       {isLoading ? (
         <TableSkeleton />
-      ) : data && data.length > 0 ? (
-        <ProductTable data={data} mutate={mutate} />
       ) : (
-        <p>No products found.</p>
+        <ProductTable data={data} mutate={mutate} />
       )}
     </div>
   );

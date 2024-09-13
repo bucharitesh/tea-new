@@ -9,6 +9,7 @@ export async function GET(request: Request) {
   const sortOrder = searchParams.get("sortOrder") || "desc";
   const tenant = searchParams.get("tenant") || "admin";
   const filters: any = searchParams.get("filter") || null;
+  const search: any = searchParams.get("search") || null;
 
   console.log("test", filters)
 
@@ -22,7 +23,9 @@ export async function GET(request: Request) {
       },
     });
 
-    return NextResponse.json(products);
+  const filteredSearch = products.filter((each) => search && search !== "" ? each.sellerId.includes(search) : each);
+  
+  return NextResponse.json(filteredSearch);
   }
 
   if (tenant === "buyer") {
@@ -36,7 +39,9 @@ export async function GET(request: Request) {
       },
     });
 
-    return NextResponse.json(products);
+  const filteredSearch = products.filter((each) => search && search !== "" ? each.sellerId.includes(search) : each);
+  
+  return NextResponse.json(filteredSearch);
   }
 
   const products = await prisma.product.findMany({
@@ -48,5 +53,7 @@ export async function GET(request: Request) {
     },
   });
 
-  return NextResponse.json(products);
+  const filteredSearch = products.filter((each) => search && search !== "" ? each.sellerId.includes(search) : each);
+
+  return NextResponse.json(filteredSearch);
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -9,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -17,12 +17,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Product } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useMemo, useState } from "react";
 import { useGlobalFilter, useSortBy, useTable } from "react-table";
 import useSWR from "swr";
 import CreateProductForm from "./form";
-import { Product } from "@prisma/client";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -53,20 +53,10 @@ const ProductTable = ({ data }) => {
     headerGroups,
     rows,
     prepareRow,
-    state,
-    setGlobalFilter,
   } = useTable({ columns, data }, useGlobalFilter, useSortBy);
-
-  const { globalFilter } = state;
 
   return (
     <>
-      <Input
-        value={globalFilter || ""}
-        onChange={(e) => setGlobalFilter(e.target.value)}
-        placeholder="Search all columns..."
-        className="mb-4 w-1/4"
-      />
       <Table {...getTableProps()}>
         <TableHeader>
           {headerGroups.map((headerGroup) => (
@@ -113,6 +103,11 @@ const ProductTable = ({ data }) => {
           })}
         </TableBody>
       </Table>
+      {!data || data.length === 0 && (
+        <span className="text-black w-full text-sm flex items-center justify-center italic mt-4 grow h-[200px] bg-gray-100 rounded-xl">
+          No product is listed with the provided filters!
+        </span>
+      )}
     </>
   );
 };
@@ -127,11 +122,12 @@ const TableSkeleton = () => (
 
 const PageClient = () => {
   const session = useSession();
-  const [statusFilter, setStatusFilter] = useState<Product["verification_status"] | "ALL">(
-    "VERIFIED"
-  );
+  const [statusFilter, setStatusFilter] = useState<
+    Product["verification_status"] | "ALL"
+  >("VERIFIED");
+  const [search, setSearch] = useState<string>("");
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/products/${session?.data?.user?.user_id}?filter=${statusFilter}`,
+    `/api/products/${session?.data?.user?.user_id}?filter=${statusFilter}&search=${search}`,
     fetcher
   );
 
@@ -148,10 +144,12 @@ const PageClient = () => {
         <h2 className="text-2xl font-bold">Your Products</h2>
         <CreateProductForm sellerId={session?.data?.user?.user_id as string} />
       </div>
-      <div className="w-1/4 mb-2">
+      <div className="w-1/2 flex items-center gap-2 mb-4">
         <Select
           value={statusFilter}
-          onValueChange={(value) => setStatusFilter(value as Product["verification_status"])}
+          onValueChange={(value) =>
+            setStatusFilter(value as Product["verification_status"])
+          }
         >
           <SelectTrigger>
             <SelectValue placeholder="Filter by grade" />
@@ -163,14 +161,13 @@ const PageClient = () => {
             <SelectItem value="ALL">ALL</SelectItem>
           </SelectContent>
         </Select>
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search ID..."
+        />
       </div>
-      {isLoading ? (
-        <TableSkeleton />
-      ) : data && data.length > 0 ? (
-        <ProductTable data={data} />
-      ) : (
-        <p>No products found.</p>
-      )}
+      {isLoading ? <TableSkeleton /> : <ProductTable data={data} />}
     </div>
   );
 };
