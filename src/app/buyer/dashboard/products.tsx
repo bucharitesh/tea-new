@@ -136,9 +136,8 @@ const ProductPage = () => {
   const [statusFilter, setStatusFilter] = useState<Product["grade"] | "ALL">(
     "ALL"
   );
-  const [search, setSearch] = useState<string>("");
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/products/all?tenant=buyer&filter=${statusFilter}&search=${search}`,
+    `/api/products/all?tenant=buyer&filter=${statusFilter}`,
     fetcher
   );
 
@@ -150,10 +149,7 @@ const ProductPage = () => {
     );
 
   return (
-    <div className="flex flex-col w-full text-lg p-8">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">Products Listed</h2>
-      </div>
+    <div className="flex flex-col w-full text-lg py-8">
       <div className="w-1/2 flex items-center gap-2 mb-4">
         <Select
           value={statusFilter}
@@ -169,11 +165,6 @@ const ProductPage = () => {
             <SelectItem value="ALL">All</SelectItem>
           </SelectContent>
         </Select>
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search ID..."
-        />
       </div>
       {isLoading ? <TableSkeleton /> : <ProductTable data={data} />}
     </div>

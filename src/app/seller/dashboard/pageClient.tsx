@@ -125,9 +125,8 @@ const PageClient = () => {
   const [statusFilter, setStatusFilter] = useState<
     Product["verification_status"] | "ALL"
   >("VERIFIED");
-  const [search, setSearch] = useState<string>("");
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/products/${session?.data?.user?.user_id}?filter=${statusFilter}&search=${search}`,
+    `/api/products/${session?.data?.user?.user_id}?filter=${statusFilter}`,
     fetcher
   );
 
@@ -141,7 +140,6 @@ const PageClient = () => {
   return (
     <div className="flex flex-col w-full text-lg">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">Your Products</h2>
         <CreateProductForm sellerId={session?.data?.user?.user_id as string} />
       </div>
       <div className="w-1/2 flex items-center gap-2 mb-4">
@@ -161,11 +159,6 @@ const PageClient = () => {
             <SelectItem value="ALL">ALL</SelectItem>
           </SelectContent>
         </Select>
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search ID..."
-        />
       </div>
       {isLoading ? <TableSkeleton /> : <ProductTable data={data} />}
     </div>

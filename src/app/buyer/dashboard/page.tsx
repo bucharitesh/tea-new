@@ -6,6 +6,7 @@ const Page = () => {
     <div>
       <Header title="Live now" description="Live Tea Offerings right now." />
       <ProductPage />
+      <Header title="Cart" description="Cart Items here same as table" />
     </div>
   );
 };
