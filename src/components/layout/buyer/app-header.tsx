@@ -10,14 +10,14 @@ export function AppHeader() {
   return (
     // TODO: discuss amount of top-3 and top-6
     <header className="sticky top-2 z-50 w-full border-border">
-      <Shell className="bg-background/70 px-3 py-3 backdrop-blur-lg md:px-6 md:py-3">
-        <div className="flex w-full items-center justify-between">
+      <Shell className="bg-background/70 px-3 py-3 flex flex-col gap-4 backdrop-blur-lg md:px-6 md:py-3">
+        <div className="flex w-full items-center justify-between self-end">
           <div className="flex items-center gap-1">
             <div className="relative">
               <Skeleton className="h-8 w-8 rounded-full" />
               <div className="absolute inset-0">{/* <UserNav /> */}</div>
             </div>
-            <CartSheet />
+            {/* <CartSheet /> */}
           </div>
         </div>
         <AppTabs />

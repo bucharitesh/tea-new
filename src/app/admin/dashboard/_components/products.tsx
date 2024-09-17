@@ -1,5 +1,6 @@
 "use client";
 
+import PaginationPages from "@/components/layout/paginationPages";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -18,7 +19,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Product } from "@prisma/client";
-import { useSession } from "next-auth/react";
 import { useMemo, useState } from "react";
 import { useGlobalFilter, useSortBy, useTable } from "react-table";
 import useSWR from "swr";
@@ -26,7 +26,7 @@ import EditProductForm from "./edit-product-form";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
-const ProductTable = ({ data, mutate }) => {
+const ProductTable = ({ data, mutate, currentPage, setCurrentPage, pages }) => {
   const columns = useMemo(
     () => [
       { Header: "ID", accessor: "id" },
@@ -47,13 +47,8 @@ const ProductTable = ({ data, mutate }) => {
     []
   );
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({ columns, data }, useGlobalFilter, useSortBy);
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable({ columns, data }, useGlobalFilter, useSortBy);
 
   return (
     <>
@@ -109,6 +104,11 @@ const ProductTable = ({ data, mutate }) => {
           No product is listed with the provided filters!
         </span>
       )}
+      <PaginationPages
+        pages={pages}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };
@@ -122,14 +122,14 @@ const TableSkeleton = () => (
 );
 
 const ProductPage = () => {
-  const session = useSession();
-
   const [statusFilter, setStatusFilter] = useState<
     Product["verification_status"] | "ALL"
   >("PENDING");
   const [search, setSearch] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(0);
+
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/products/all?tenant=admin&filter=${statusFilter}&search=${search}`,
+    `/api/products/all?tenant=admin&filter=${statusFilter}&search=${search}&page=${currentPage}&pageSize=10`,
     fetcher
   );
 
@@ -172,7 +172,13 @@ const ProductPage = () => {
       {isLoading ? (
         <TableSkeleton />
       ) : (
-        <ProductTable data={data} mutate={mutate} />
+        <ProductTable
+          data={data.data}
+          mutate={mutate}
+          pages={data.pages}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
       )}
     </div>
   );

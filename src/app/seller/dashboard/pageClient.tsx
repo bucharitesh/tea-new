@@ -23,10 +23,11 @@ import { useMemo, useState } from "react";
 import { useGlobalFilter, useSortBy, useTable } from "react-table";
 import useSWR from "swr";
 import CreateProductForm from "./form";
+import PaginationPages from "@/components/layout/paginationPages";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
-const ProductTable = ({ data }) => {
+const ProductTable = ({ data, currentPage, setCurrentPage, pages }) => {
   const columns = useMemo(
     () => [
       { Header: "ID", accessor: "id" },
@@ -47,13 +48,8 @@ const ProductTable = ({ data }) => {
     []
   );
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({ columns, data }, useGlobalFilter, useSortBy);
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable({ columns, data }, useGlobalFilter, useSortBy);
 
   return (
     <>
@@ -103,11 +99,17 @@ const ProductTable = ({ data }) => {
           })}
         </TableBody>
       </Table>
-      {!data || data.length === 0 && (
-        <span className="text-black w-full text-sm flex items-center justify-center italic mt-4 grow h-[200px] bg-gray-100 rounded-xl">
-          No product is listed with the provided filters!
-        </span>
-      )}
+      {!data ||
+        (data.length === 0 && (
+          <span className="text-black w-full text-sm flex items-center justify-center italic mt-4 grow h-[200px] bg-gray-100 rounded-xl">
+            No product is listed with the provided filters!
+          </span>
+        ))}
+      <PaginationPages
+        pages={pages}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };
@@ -125,8 +127,11 @@ const PageClient = () => {
   const [statusFilter, setStatusFilter] = useState<
     Product["verification_status"] | "ALL"
   >("VERIFIED");
+  const [search, setSearch] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(0);
+
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/products/${session?.data?.user?.user_id}?filter=${statusFilter}`,
+    `/api/products/${session?.data?.user?.user_id}?filter=${statusFilter}&search=${search}&page=${currentPage}&pageSize=10`,
     fetcher
   );
 
@@ -160,7 +165,16 @@ const PageClient = () => {
           </SelectContent>
         </Select>
       </div>
-      {isLoading ? <TableSkeleton /> : <ProductTable data={data} />}
+      {isLoading ? (
+        <TableSkeleton />
+      ) : (
+        <ProductTable
+          data={data.data}
+          pages={data.pages}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
+      )}
     </div>
   );
 };
