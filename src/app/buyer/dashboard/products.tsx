@@ -1,6 +1,7 @@
 "use client";
 
 import { AddToCartForm } from "@/cart/cart-components";
+import PaginationPages from "@/components/layout/paginationPages";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -19,14 +20,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Product } from "@prisma/client";
-import { useSession } from "next-auth/react";
 import { useMemo, useState } from "react";
-import { useGlobalFilter, useSortBy, useTable } from "react-table";
+import {
+  useGlobalFilter,
+  usePagination,
+  useSortBy,
+  useTable,
+} from "react-table";
 import useSWR from "swr";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
-const ProductTable = ({ data }) => {
+const ProductTable = ({ data, currentPage, setCurrentPage, pages }) => {
   const columns = useMemo(
     () => [
       { Header: "Seller ID", accessor: "sellerId" },
@@ -66,13 +71,13 @@ const ProductTable = ({ data }) => {
     []
   );
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({ columns, data }, useGlobalFilter, useSortBy);
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable(
+      { columns, data, initialState: { pageIndex: 0 } },
+      useGlobalFilter,
+      useSortBy,
+      usePagination
+    );
 
   return (
     <>
@@ -119,6 +124,11 @@ const ProductTable = ({ data }) => {
           No product is listed with the provided filters!
         </span>
       )}
+        <PaginationPages
+          pages={pages}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
     </>
   );
 };
@@ -132,13 +142,14 @@ const TableSkeleton = () => (
 );
 
 const ProductPage = () => {
-  const session = useSession();
   const [statusFilter, setStatusFilter] = useState<Product["grade"] | "ALL">(
     "ALL"
   );
   const [search, setSearch] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(0);
+
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/products/all?tenant=buyer&filter=${statusFilter}&search=${search}`,
+    `/api/products/all?tenant=buyer&filter=${statusFilter}&search=${search}&page=${currentPage}&pageSize=10`,
     fetcher
   );
 
@@ -175,7 +186,16 @@ const ProductPage = () => {
           placeholder="Search ID..."
         />
       </div>
-      {isLoading ? <TableSkeleton /> : <ProductTable data={data} />}
+      {isLoading ? (
+        <TableSkeleton />
+      ) : (
+        <ProductTable
+          data={data.data}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          pages={data.pages}
+        />
+      )}
     </div>
   );
 };

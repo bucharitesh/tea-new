@@ -10,38 +10,75 @@ export async function GET(request: Request) {
   const tenant = searchParams.get("tenant") || "admin";
   const filters: any = searchParams.get("filter") || null;
   const search: any = searchParams.get("search") || null;
-
-  console.log("test", filters)
+  const page: any = searchParams.get("page") || null;
+  const pageSize: any = searchParams.get("pageSize") || null;
 
   if (tenant === "admin") {
     const products = await prisma.product.findMany({
+      skip: page * Number(pageSize),
+      take: Number(pageSize),
       where: {
-        verification_status: filters && filters !== "ALL" ? filters: undefined,
+        verification_status: filters && filters !== "ALL" ? filters : undefined,
       },
       orderBy: {
         [sortBy]: sortOrder,
       },
     });
 
-  const filteredSearch = products.filter((each) => search && search !== "" ? each.sellerId.includes(search) : each);
-  
-  return NextResponse.json(filteredSearch);
+    const productsForRef = await prisma.product.findMany({
+      where: {
+        verification_status: filters && filters !== "ALL" ? filters : undefined,
+      },
+      orderBy: {
+        [sortBy]: sortOrder,
+      },
+    });
+
+    const filteredSearch = products.filter((each) =>
+      search && search !== "" ? each.sellerId.includes(search) : each
+    );
+
+    const res = {
+      data: filteredSearch,
+      pages: Math.floor(productsForRef.length / pageSize) + 1,
+    };
+
+    return NextResponse.json(res);
   }
 
   if (tenant === "buyer") {
     const products = await prisma.product.findMany({
+      skip: page * Number(pageSize),
+      take: Number(pageSize),
       where: {
         verification_status: "VERIFIED",
-        grade: filters && filters !== "ALL" ? filters : undefined
+        grade: filters && filters !== "ALL" ? filters : undefined,
       },
       orderBy: {
         [sortBy]: sortOrder,
       },
     });
 
-  const filteredSearch = products.filter((each) => search && search !== "" ? each.sellerId.includes(search) : each);
-  
-  return NextResponse.json(filteredSearch);
+    const productsForRef = await prisma.product.findMany({
+      where: {
+        verification_status: "VERIFIED",
+        grade: filters && filters !== "ALL" ? filters : undefined,
+      },
+      orderBy: {
+        [sortBy]: sortOrder,
+      },
+    });
+
+    const filteredSearch = products.filter((each) =>
+      search && search !== "" ? each.sellerId.includes(search) : each
+    );
+
+    const res = {
+      data: filteredSearch,
+      pages: Math.floor(productsForRef.length / pageSize) + 1,
+    };
+
+    return NextResponse.json(res);
   }
 
   const products = await prisma.product.findMany({
@@ -53,7 +90,9 @@ export async function GET(request: Request) {
     },
   });
 
-  const filteredSearch = products.filter((each) => search && search !== "" ? each.sellerId.includes(search) : each);
+  const filteredSearch = products.filter((each) =>
+    search && search !== "" ? each.sellerId.includes(search) : each
+  );
 
   return NextResponse.json(filteredSearch);
 }
