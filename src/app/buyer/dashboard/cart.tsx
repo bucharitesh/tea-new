@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useSession } from "next-auth/react";
+import { getAverageScore } from "@/lib/utils";
 import { useMemo } from "react";
 import { useTable } from "react-table";
 import { toast } from "sonner";
@@ -34,13 +35,7 @@ const Cart = () => {
       {
         Header: "Score",
         accessor: "score",
-        Cell: ({ value }) => {
-          const { appearance, taste, liquor, infusion, grading } = value;
-          return (
-            (appearance + liquor + taste + infusion + grading) /
-            50
-          ).toFixed(2);
-        },
+        Cell: ({ value }) => getAverageScore(value),
       },
       { Header: "Packages", accessor: "pkgs" },
       { Header: "Kg Per Bag", accessor: "kgPerBag" },

@@ -1,3 +1,4 @@
+import { getOrderTotal } from "@/lib/utils";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 
@@ -34,9 +35,14 @@ export async function GET(request: Request) {
       },
     });
 
-    const filteredSearch = products.filter((each) =>
+    let filteredSearch: any = products.filter((each) =>
       search && search !== "" ? each.sellerId.includes(search) : each
     );
+
+    filteredSearch = filteredSearch.map((each: any) => {
+      each.total = getOrderTotal(each.pkgs, each.kgPerBag, each.sampleUsed)
+      return each;
+    })
 
     const res = {
       data: filteredSearch,
@@ -69,9 +75,15 @@ export async function GET(request: Request) {
       },
     });
 
-    const filteredSearch = products.filter((each) =>
+    let filteredSearch = products.filter((each) =>
       search && search !== "" ? each.sellerId.includes(search) : each
     );
+
+
+    filteredSearch = filteredSearch.map((each: any) => {
+      each.total = getOrderTotal(each.pkgs, each.kgPerBag, each.sampleUsed)
+      return each;
+    })
 
     const res = {
       data: filteredSearch,

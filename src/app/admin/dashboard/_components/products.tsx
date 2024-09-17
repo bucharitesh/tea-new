@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getAverageScore } from "@/lib/utils";
 import { Product } from "@prisma/client";
 import { useMemo, useState } from "react";
 import { useGlobalFilter, useSortBy, useTable } from "react-table";
@@ -36,17 +37,15 @@ const ProductTable = ({ data, mutate, currentPage, setCurrentPage, pages }) => {
       {
         Header: "Score",
         accessor: "score",
-        Cell: ({ value }) => {
-          const { appearance, taste, liquor, infusion, grading } = value;
-          return (
-            (appearance + liquor + taste + infusion + grading) /
-            50
-          ).toFixed(2);
-        },
+        Cell: ({ value }) => getAverageScore(value),
       },
       { Header: "Packages", accessor: "pkgs" },
       { Header: "Kg Per Bag", accessor: "kgPerBag" },
       { Header: "Sample Used", accessor: "sampleUsed" },
+      {
+        Header: "Total",
+        accessor: "total"
+      },
       { Header: "Price", accessor: "price" },
       {
         Header: "Division",
