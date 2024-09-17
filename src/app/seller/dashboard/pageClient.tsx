@@ -145,7 +145,6 @@ const PageClient = () => {
   return (
     <div className="flex flex-col w-full text-lg">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">Your Products</h2>
         <CreateProductForm sellerId={session?.data?.user?.user_id as string} />
       </div>
       <div className="w-1/2 flex items-center gap-2 mb-4">
@@ -165,11 +164,6 @@ const PageClient = () => {
             <SelectItem value="ALL">ALL</SelectItem>
           </SelectContent>
         </Select>
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search ID..."
-        />
       </div>
       {isLoading ? (
         <TableSkeleton />
