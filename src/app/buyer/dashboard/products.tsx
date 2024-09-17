@@ -37,6 +37,17 @@ const ProductTable = ({ data, currentPage, setCurrentPage, pages }) => {
       { Header: "Seller ID", accessor: "sellerId" },
       { Header: "Invoice No", accessor: "invoiceNo" },
       { Header: "Grade", accessor: "grade" },
+      {
+        Header: "Score",
+        accessor: "score",
+        Cell: ({ value }) => {
+          const { appearance, taste, liquor, infusion, grading } = value;
+          return (
+            (appearance + liquor + taste + infusion + grading) /
+            50
+          ).toFixed(2);
+        },
+      },
       { Header: "Packages", accessor: "pkgs" },
       { Header: "Kg Per Bag", accessor: "kgPerBag" },
       { Header: "Sample Used", accessor: "sampleUsed" },
