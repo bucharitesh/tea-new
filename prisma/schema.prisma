@@ -113,3 +113,35 @@ enum ProductVerificationStatus {
   PENDING
   REJECTED
 }
+
+model Order {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String     
+  items       OrderItem[]
+  totalAmount Float
+  status      OrderStatus
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+type OrderItem {
+  productId       String
+  sellerId        String
+  invoiceNo       Int
+  grade           ProductGrade
+  pkgs            Int
+  kgPerBag        Float
+  sampleUsed      Float
+  price           Float
+  division        Boolean
+  quantity        Int
+  priceAtPurchase Float
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}

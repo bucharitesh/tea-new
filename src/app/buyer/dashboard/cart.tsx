@@ -1,3 +1,5 @@
+'use client';
+
 import { TableSkeleton } from "@/cart/cart-components";
 import { useCart } from "@/cart/cart-context";
 import { Button } from "@/components/ui/button";
@@ -9,17 +11,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useSession } from "next-auth/react";
 import { useMemo } from "react";
 import { useTable } from "react-table";
+import { toast } from "sonner";
 
 const Cart = () => {
-  const { cartItems, cartCount } = useCart();
+  const { placeOrder, cartItems, cartCount } = useCart();
+
+  const { data: session } = useSession();
 
   const columnData = cartItems.map((each) => ({
     ...each.product,
     quantity: each.quantity,
   }));
-  console.log("data", columnData);
 
   const columns = useMemo(
     () => [
@@ -54,13 +59,32 @@ const Cart = () => {
     []
   );
 
+    const handlePlaceOrder = async () => {
+      if (!session?.user?.user_id) {
+        toast.error("You must be logged in to place an order.");
+        return;
+      }
+
+      if (cartCount === 0) {
+        toast.error("Your cart is empty.");
+        return;
+      }
+
+      try {
+        await placeOrder(session?.user?.user_id);
+        toast.success("Your order has been placed successfully!");
+      } catch (error) {
+        toast.error("Failed to place order. Please try again.");
+      }
+    };
+
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data: columnData });
 
   return (
-    <div className="flex flex-col w-full text-lg p-8">
+    <div className="flex flex-col w-full text-lg">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">Your Shopping Cart</h2>
+        <h2 className="text-2xl font-bold">Your Cart</h2>
       </div>
       {!columnData ? (
         <TableSkeleton />
@@ -109,7 +133,15 @@ const Cart = () => {
           )}
         </>
       )}
-      {cartCount > 0 && <Button className="w-1/5 self-center mt-6">Place Order</Button>}
+      {cartCount > 0 && (
+        <Button
+          onClick={handlePlaceOrder}
+          disabled={cartCount === 0}
+          className="w-1/5 self-end mt-6"
+        >
+          Place Order
+        </Button>
+      )}
     </div>
   );
 };

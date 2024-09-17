@@ -3,6 +3,13 @@ import { persist } from "zustand/middleware";
 
 export type ProductGrade = "A" | "B" | "C";
 
+export type OrderStatus =
+  | "PENDING"
+  | "PROCESSING"
+  | "SHIPPED"
+  | "DELIVERED"
+  | "CANCELLED";
+
 export interface Product {
   id: string;
   sellerId: string;
@@ -13,7 +20,7 @@ export interface Product {
   sampleUsed: number;
   price: number;
   division: boolean;
-  verification_status: "VERIFIED" | "PENDING" | "REJECTED";
+  verification_status: string;
   score?: {
     appearance: number;
     taste: number;
@@ -30,18 +37,17 @@ export interface CartItem {
 
 interface CartState {
   cartItems: CartItem[];
-  products: Product[];
   addToCart: (product: Product) => void;
   removeFromCart: (productId: string) => void;
   updateCartItemQuantity: (productId: string, quantity: number) => void;
-  setProducts: (products: Product[]) => void;
+  clearCart: () => void;
+  placeOrder: (userId: string) => Promise<void>;
 }
 
 export const useCartStore = create(
   persist<CartState>(
     (set, get) => ({
       cartItems: [],
-      products: [],
       addToCart: (product) =>
         set((state) => {
           const existingItem = state.cartItems.find(
@@ -70,11 +76,52 @@ export const useCartStore = create(
             item.product.id === productId ? { ...item, quantity } : item
           ),
         })),
-      setProducts: (products) => set({ products }),
+      clearCart: () => set({ cartItems: [] }),
+      placeOrder: async (userId) => {
+        const { cartItems } = get();
+        if (cartItems.length === 0) {
+          throw new Error("Cart is empty");
+        }
+        try {
+          const response = await fetch("/api/orders", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId,
+              cartItems: cartItems.map((item) => ({
+                productId: item.product.id,
+                sellerId: item.product.sellerId,
+                invoiceNo: item.product.invoiceNo,
+                grade: item.product.grade,
+                pkgs: item.product.pkgs,
+                kgPerBag: item.product.kgPerBag,
+                sampleUsed: item.product.sampleUsed,
+                price: item.product.price,
+                division: item.product.division,
+                quantity: item.quantity,
+                priceAtPurchase: item.product.price,
+              })),
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to place order");
+          }
+
+          const data = await response.json();
+          get().clearCart();
+          return data.order;
+        } catch (error) {
+          console.error("Failed to place order:", error);
+          throw error;
+        }
+      },
     }),
     {
-      name: "cart-storage", // name of the item in the storage (must be unique)
-      getStorage: () => localStorage, // (optional) by default, 'localStorage' is used
+      name: "cart-storage",
+      getStorage: () => localStorage,
     }
   )
 );
