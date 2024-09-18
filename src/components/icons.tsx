@@ -23,6 +23,7 @@ import {
   Plus,
   Settings,
   SunMedium,
+  ShoppingBag,
   ShoppingCart,
   Trash,
   Twitter,
@@ -62,6 +63,7 @@ export const Icons = {
   moon: Moon,
   laptop: Laptop,
   products: ShoppingCart,
+  orders: ShoppingBag,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

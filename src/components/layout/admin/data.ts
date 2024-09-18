@@ -11,4 +11,10 @@ export const adminNavItems: any[] = [
     icon: 'products',
     label: 'products'
   },
+  {
+    title: 'Orders',
+    href: '/dashboard/orders',
+    icon: 'orders',
+    label: 'orders'
+  },
 ];
