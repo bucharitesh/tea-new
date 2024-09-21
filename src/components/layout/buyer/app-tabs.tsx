@@ -1,4 +1,4 @@
-import { useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import { TabsContainer, TabsLink } from "../tabs-link";
 
@@ -9,33 +9,27 @@ const pagesConfig = [
   },
   {
     title: "Orders",
-    href: "orders",
+    href: "/orders",
   },
   {
     title: "Account",
-    href: "account",
-  },
-  {
-    title: "Cart",
-    href: "cart",
+    href: "/account",
   },
 ];
 
 export function AppTabs() {
-  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   return (
     <div className="-mb-3">
       <TabsContainer>
         {pagesConfig.map(({ title, href }) => {
-          const active =
-            href === searchParams.get("tab") ||
-            (!searchParams.get("tab") && href === "");
+          const active = `/dashboard${href}` === pathname;
           return (
             <TabsLink
               key={title}
               active={active}
-              href={href !== "" ? `/dashboard?tab=${href}` : "/dashboard"}
+              href={`/dashboard${href}`}
               prefetch={false}
             >
               {title}

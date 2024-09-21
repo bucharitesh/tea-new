@@ -24,7 +24,7 @@ export async function GET(request: Request, context: any) {
     skip: page * pageSize,
     take: pageSize,
     where: {
-      buyerId: tenant === "buyer" ? id : undefined,
+      userId: tenant === "buyer" ? id : undefined,
       items: {
         some: {
           sellerId: tenant === "seller" ? id : undefined,
@@ -39,7 +39,7 @@ export async function GET(request: Request, context: any) {
 
   const totalOrders = await prisma.order.count({
     where: {
-      buyerId: tenant === "buyer" ? id : undefined,
+      userId: tenant === "buyer" ? id : undefined,
       items: {
         some: {
           sellerId: tenant === "seller" ? id : undefined,
