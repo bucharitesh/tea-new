@@ -3,9 +3,15 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { auth } from "./lib/auth";
 
-export const ADMIN_HOSTNAMES = new Set(["admin.localhost:3000"]);
-export const BUYER_HOSTNAMES = new Set(["localhost:3000"]);
-export const SELLER_HOSTNAMES = new Set(["seller.localhost:3000"]);
+export const ADMIN_HOSTNAMES = new Set([
+  "admin-tea.vercel.app",
+  "admin.localhost:3000",
+]);
+export const BUYER_HOSTNAMES = new Set(["buyer-tea.vercel.app, localhost:3000"]);
+export const SELLER_HOSTNAMES = new Set([
+  "seller-tea.vercel.app",
+  "seller.localhost:3000",
+]);
 
 export async function middleware(request: NextRequest) {
   const { domain, fullPath } = parse(request);

@@ -6,7 +6,8 @@
     "dev": "prisma generate && next dev",
     "prisma:dev": "prisma generate && prisma studio --browser none",
     "email:dev": "email dev --port 3333",
-    "build": "next build",
+    "prebuild": "prisma generate",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint"
   },

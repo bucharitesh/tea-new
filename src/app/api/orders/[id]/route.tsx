@@ -30,7 +30,6 @@ export async function GET(request: Request, context: any) {
           sellerId: tenant === "seller" ? id : undefined,
         },
       },
-      status: status !== "ALL" ? status : undefined,
     },
     orderBy: {
       [sortBy]: sortOrder,
@@ -45,7 +44,6 @@ export async function GET(request: Request, context: any) {
           sellerId: tenant === "seller" ? id : undefined,
         },
       },
-      status: status !== "ALL" ? status : undefined,
     },
   });
 
