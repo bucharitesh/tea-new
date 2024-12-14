@@ -88,9 +88,12 @@ const Cart = () => {
           <Table {...getTableProps()}>
             <TableHeader>
               {headerGroups.map((headerGroup) => (
-                <TableRow {...headerGroup.getHeaderGroupProps()}>
+                <TableRow
+                  key={headerGroup?.id}
+                  {...headerGroup.getHeaderGroupProps()}
+                >
                   {headerGroup.headers.map((column) => (
-                    <TableHead>
+                    <TableHead key={column?.id}>
                       {column.render("Header")}
                       <span>
                         {column.isSorted
@@ -108,10 +111,10 @@ const Cart = () => {
               {rows.map((row) => {
                 prepareRow(row);
                 return (
-                  <TableRow {...row.getRowProps()}>
+                  <TableRow key={row?.id} {...row.getRowProps()}>
                     {row.cells.map((cell) => {
                       return (
-                        <TableCell {...cell.getCellProps()}>
+                        <TableCell key={cell?.id} {...cell.getCellProps()}>
                           {cell.render("Cell")}
                         </TableCell>
                       );

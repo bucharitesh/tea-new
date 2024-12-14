@@ -65,9 +65,13 @@ const ProductTable = ({ data, mutate, currentPage, setCurrentPage, pages }) => {
       <Table {...getTableProps()}>
         <TableHeader>
           {headerGroups.map((headerGroup) => (
-            <TableRow {...headerGroup.getHeaderGroupProps()}>
+            <TableRow
+              key={headerGroup.id}
+              {...headerGroup.getHeaderGroupProps()}
+            >
               {headerGroup.headers.map((column) => (
                 <TableHead
+                  key={column.id}
                   {...column.getHeaderProps(column.getSortByToggleProps())}
                 >
                   {column.render("Header")}
@@ -87,10 +91,10 @@ const ProductTable = ({ data, mutate, currentPage, setCurrentPage, pages }) => {
           {rows.map((row) => {
             prepareRow(row);
             return (
-              <TableRow {...row.getRowProps()}>
+              <TableRow key={row?.id} {...row.getRowProps()}>
                 {row.cells.map((cell) => {
                   return (
-                    <TableCell {...cell.getCellProps()}>
+                    <TableCell key={cell?.id} {...cell.getCellProps()}>
                       {cell.getCellProps().key.split("_")[
                         cell.getCellProps().key.split("_").length - 1
                       ] === "status" ? (
