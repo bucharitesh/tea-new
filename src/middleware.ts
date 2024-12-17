@@ -2,63 +2,31 @@ import { parse } from "@/lib/utils";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { auth } from "./lib/auth";
+import { AdminMiddleware, BuyerMiddleware, SellerMiddleware } from "./lib/middleware/admin";
 
 export const ADMIN_HOSTNAMES = new Set([
   "admin-tea.vercel.app",
   "admin.localhost:3000",
 ]);
-export const BUYER_HOSTNAMES = new Set(["buyer-tea.vercel.app, localhost:3000"]);
+export const BUYER_HOSTNAMES = new Set(["buyer-tea.vercel.app", "localhost:3000"]);
 export const SELLER_HOSTNAMES = new Set([
   "seller-tea.vercel.app",
   "seller.localhost:3000",
 ]);
 
 export async function middleware(request: NextRequest) {
-  const { domain, fullPath } = parse(request);
-  const session = await auth();
-
-  const loginUrl = new URL("/login", request.url);
-  const dashboardUrl = new URL("/dashboard", request.url);
-
-  const isLoggedIn = !!session?.user;
-  const userTenant = session?.user?.tenant;
+  const { domain } = parse(request);
 
   if (BUYER_HOSTNAMES.has(domain)) {
-    if (!isLoggedIn && fullPath !== "/login" && fullPath !== "/register") {
-      return NextResponse.redirect(loginUrl);
-    }
-    if (isLoggedIn && fullPath === "/login") {
-      return NextResponse.redirect(dashboardUrl);
-    }
-    return NextResponse.rewrite(new URL(`/buyer${fullPath}`, request.url));
+    return BuyerMiddleware(request);
   }
 
   if (SELLER_HOSTNAMES.has(domain)) {
-    if (
-      (!isLoggedIn || userTenant !== "SELLER") &&
-      fullPath !== "/login" &&
-      fullPath !== "/register"
-    ) {
-      return NextResponse.redirect(loginUrl);
-    }
-    if (isLoggedIn && userTenant === "SELLER" && fullPath === "/login") {
-      return NextResponse.redirect(dashboardUrl);
-    }
-    return NextResponse.rewrite(new URL(`/seller${fullPath}`, request.url));
+    return SellerMiddleware(request);
   }
 
   if (ADMIN_HOSTNAMES.has(domain)) {
-    if (
-      (!isLoggedIn || userTenant !== "ADMIN") &&
-      fullPath !== "/login" &&
-      fullPath !== "/register"
-    ) {
-      return NextResponse.redirect(loginUrl);
-    }
-    if (isLoggedIn && userTenant === "ADMIN" && fullPath === "/login") {
-      return NextResponse.redirect(dashboardUrl);
-    }
-    return NextResponse.rewrite(new URL(`/admin${fullPath}`, request.url));
+    return AdminMiddleware(request);
   }
 
   return NextResponse.next();

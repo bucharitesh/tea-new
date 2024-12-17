@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import LoginForm from "./page-client";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Authentication",
@@ -48,6 +49,15 @@ export default function AuthenticationPage() {
             </p>
           </div>
           <LoginForm />
+          <p className="px-8 text-center text-sm text-muted-foreground">
+            Not registered yet?{" "}
+            <Link
+              href="/register"
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              Register
+            </Link>
+          </p>
           {/* <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our{" "}
             <Link
