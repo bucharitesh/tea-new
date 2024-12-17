@@ -24,6 +24,10 @@ export async function SellerMiddleware(req: NextRequest) {
 
   const user = await auth();
 
+  if (path === "/register") {
+    return NextResponse.rewrite(new URL(`/seller${fullPath}`, req.url));
+  }
+
   if (path === "/login" && user) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   } else if (path !== "/login" && !user) {
@@ -31,18 +35,6 @@ export async function SellerMiddleware(req: NextRequest) {
   }
 
   return NextResponse.rewrite(new URL(`/seller${fullPath}`, req.url));
-
-//   if (
-//     (!isLoggedIn || userTenant !== "SELLER") &&
-//     fullPath !== "/login" &&
-//     fullPath !== "/register"
-//   ) {
-//     return NextResponse.redirect(loginUrl);
-//   }
-//   if (isLoggedIn && userTenant === "SELLER" && fullPath === "/login") {
-//     return NextResponse.redirect(dashboardUrl);
-//   }
-//   return NextResponse.rewrite(new URL(`/seller${fullPath}`, request.url));
 }
 
 
@@ -50,6 +42,10 @@ export async function BuyerMiddleware(req: NextRequest) {
   const { path, fullPath } = parse(req);
 
   const user = await auth();
+
+  if (path === "/register") {
+    return NextResponse.rewrite(new URL(`/buyer${fullPath}`, req.url));
+  }
 
   if (path === "/login" && user) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
@@ -59,15 +55,3 @@ export async function BuyerMiddleware(req: NextRequest) {
 
   return NextResponse.rewrite(new URL(`/buyer${fullPath}`, req.url));
 }
-
-
-// if (
-    //   (!isLoggedIn || userTenant !== "ADMIN") &&
-    //   fullPath !== "/login" &&
-    //   fullPath !== "/register"
-    // ) {
-    //   return NextResponse.redirect(loginUrl);
-    // }
-    // if (isLoggedIn && userTenant === "ADMIN" && fullPath === "/login") {
-    //   return NextResponse.rewrite(new URL(`/admin${dashboardUrl}`, request.url));
-    // }
