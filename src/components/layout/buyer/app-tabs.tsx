@@ -11,10 +11,10 @@ const pagesConfig = [
     title: "Orders",
     href: "/orders",
   },
-  {
-    title: "Account",
-    href: "/account",
-  },
+  // {
+  //   title: "Account",
+  //   href: "/account",
+  // },
 ];
 
 export function AppTabs() {

@@ -41,6 +41,9 @@ export const getAverageScore = (score: {
   infusion: number;
   grading: number;
 }) => {
+  if (!score) {
+    return 0;
+  }
   const { appearance, taste, liquor, infusion, grading } = score;
   return ((appearance + liquor + taste + infusion + grading) / 50).toFixed(2);
 };
