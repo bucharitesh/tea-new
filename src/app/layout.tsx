@@ -20,10 +20,12 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <Providers session={session}>
         <Toaster richColors />
-        <body className={inter.className}>{children}</body>
+        <body className={inter.className} suppressHydrationWarning>
+          {children}
+        </body>
       </Providers>
     </html>
   );

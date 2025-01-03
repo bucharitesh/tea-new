@@ -2,7 +2,12 @@
 
 import { AddToCartForm } from "@/cart/cart-components";
 import PaginationPages from "@/components/layout/paginationPages";
-import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -35,30 +40,38 @@ const fetcher = (url) => fetch(url).then((res) => res.json());
 const ProductTable = ({ data, currentPage, setCurrentPage, pages }) => {
   const columns = useMemo(
     () => [
-      { Header: "Seller ID", accessor: "sellerId" },
+      { Header: "Lot No.", accessor: "lotNo" },
+      { Header: "Mark", accessor: "mark" },
       { Header: "Invoice No", accessor: "invoiceNo" },
       { Header: "Grade", accessor: "grade" },
+      { Header: "Packages", accessor: "pkgs" },
+      { Header: "Kg Per Bag", accessor: "kgPerBag" },
+      {
+        Header: "Sample Used",
+        accessor: "sampleUsed",
+        Cell: ({ value }) => `${value} Kg`,
+      },
+      {
+        Header: "Net Weight",
+        accessor: "netWeight",
+        Cell: ({ row }) =>
+          `${row.original.pkgs * row.original.kgPerBag - row.original.sampleUsed} Kg`,
+      },
       {
         Header: "Score",
         accessor: "score",
-        Cell: ({ value }) => getAverageScore(value),
+        Cell: ({ value }) => (value ? <ScoreAnalysis score={value} /> : "N/A"),
       },
-      { Header: "Packages", accessor: "pkgs" },
-      { Header: "Kg Per Bag", accessor: "kgPerBag" },
-      { Header: "Sample Used", accessor: "sampleUsed" },
+      { Header: "Price per Kg", accessor: "price" },
       {
         Header: "Total",
-        accessor: "total"
-      },
-      { Header: "Price", accessor: "price" },
-      {
-        Header: "Division",
-        accessor: "division",
-        Cell: ({ value }) => (value ? "Yes" : "No"),
+        accessor: "total",
+        Cell: ({ row }) =>
+          `₹${(row.original.price * (row.original.pkgs * row.original.kgPerBag - row.original.sampleUsed)).toFixed(2)}`,
       },
       {
-        Header: "Add to Cart",
-        accessor: "addToCart",
+        Header: "Action",
+        accessor: "action",
         Cell: ({ row }) => (
           <AddToCartForm
             product={{
@@ -134,11 +147,11 @@ const ProductTable = ({ data, currentPage, setCurrentPage, pages }) => {
           No product is listed with the provided filters!
         </span>
       )}
-        <PaginationPages
-          pages={pages}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
+      <PaginationPages
+        pages={pages}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };
@@ -199,6 +212,56 @@ const ProductPage = () => {
         />
       )}
     </div>
+  );
+};
+
+const ScoreAnalysis = ({ score }) => {
+  const [open, setOpen] = useState(false);
+  const categories = {
+    appearance: "Appearance",
+    taste: "Taste",
+    liquor: "Liquor",
+    infusion: "Infusion",
+    grading: "Grading",
+  };
+
+  // Calculate average score (each category is out of 10)
+  const averageScore =
+    ((score.appearance +
+      score.taste +
+      score.liquor +
+      score.infusion +
+      score.grading) /
+      50) *
+    10;
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger
+        className="cursor-help underline border-dotted"
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+      >
+        {averageScore.toFixed(1)}/10
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-[250px] p-4"
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+      >
+        <div className="space-y-3">
+          {Object.entries(categories).map(([key, label]) => (
+            <div key={key} className="space-y-1">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">{label}</span>
+                <span className="font-medium">{score[key]}/10</span>
+              </div>
+              <Progress value={(score[key] / 10) * 100} className="h-2" />
+            </div>
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 };
 
