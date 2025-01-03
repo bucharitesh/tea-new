@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PaginationPages from "@/components/layout/paginationPages";
 import { OrderStatus } from '@/cart/cart-context';
+import { format } from 'date-fns';
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -16,11 +17,22 @@ const OrdersTable = ({ data, currentPage, setCurrentPage, pages }) => {
   const columns = useMemo(
     () => [
       { Header: "Order ID", accessor: "id" },
-      { Header: "User ID", accessor: "userId" },
-      { Header: "Total Amount", accessor: "totalAmount" },
+      { Header: "Pks", accessor: "pks", Cell: ({ row }) => {
+        const pks = row.original.items.reduce((acc, item) => acc + item.pkgs, 0);
+        return `${pks}`;
+        }
+      },
+      { Header: "Quantity", accessor: "quantity", Cell: ({ row }) => {
+        const quantity = row.original.items.reduce((acc, item) => acc + item.quantity, 0);
+        return `${quantity}`;
+      } },
+      { Header: "Total Amount", accessor: "totalAmount", Cell: ({ value }) => `₹${value}` },
+      {
+        Header: "Ordered At",
+        accessor: "createdAt",
+        Cell: ({ value }) => format(new Date(value), "dd MMM yyyy hh:mm a"),
+      },
       { Header: "Status", accessor: "status" },
-      { Header: "Created At", accessor: "createdAt", Cell: ({ value }) => new Date(value).toLocaleString() },
-      { Header: "Updated At", accessor: "updatedAt", Cell: ({ value }) => new Date(value).toLocaleString() },
     ],
     []
   );

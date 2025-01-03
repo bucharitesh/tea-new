@@ -8,7 +8,7 @@ const pagesConfig = [
     href: "",
   },
   {
-    title: "Orders",
+    title: "My Orders",
     href: "/orders",
   },
   // {
