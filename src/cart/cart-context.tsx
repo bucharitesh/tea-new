@@ -21,6 +21,7 @@ export interface Product {
   price: number;
   division: boolean;
   verification_status: string;
+  mark: number;
   score?: {
     appearance: number;
     taste: number;
@@ -37,6 +38,8 @@ export interface CartItem {
 
 interface CartState {
   cartItems: CartItem[];
+  delCharges: number;
+  othCharges: number;
   addToCart: (product: Product) => void;
   removeFromCart: (productId: string) => void;
   updateCartItemQuantity: (productId: string, quantity: number) => void;
@@ -48,6 +51,8 @@ export const useCartStore = create(
   persist<CartState>(
     (set, get) => ({
       cartItems: [],
+      delCharges: 500,
+      othCharges: 200,
       addToCart: (product) =>
         set((state) => {
           const existingItem = state.cartItems.find(
@@ -90,6 +95,8 @@ export const useCartStore = create(
             },
             body: JSON.stringify({
               userId,
+              delCharges: get().delCharges,
+              othCharges: get().othCharges,
               cartItems: cartItems.map((item) => ({
                 productId: item.product.id,
                 sellerId: item.product.sellerId,

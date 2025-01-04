@@ -58,6 +58,13 @@ const productSchema = z.object({
       .positive({ message: "Invoice number must be a positive integer" })
       .optional()
   ),
+  mark: numberSchema.pipe(
+    z
+      .number()
+      .int()
+      .positive({ message: "Mark number must be a positive integer" })
+      .optional()
+  ),
   grade: z.enum(["A", "B", "C"], { required_error: "Grade is required" }),
   pkgs: numberSchema.pipe(
     z
@@ -86,6 +93,7 @@ const EditProductForm = ({ productData, mutate }: { productData: any; mutate: an
     resolver: zodResolver(productSchema),
     defaultValues: {
       invoiceNo: productData?.invoiceNo,
+      mark: productData?.mark,
       grade: productData?.grade,
       pkgs: productData?.pkgs,
       kgPerBag: productData?.kgPerBag,
@@ -172,6 +180,22 @@ const EditProductForm = ({ productData, mutate }: { productData: any; mutate: an
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Invoice Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        onChange={(e) => field.onChange(e.target.value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="mark"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mark Number</FormLabel>
                     <FormControl>
                       <Input
                         {...field}

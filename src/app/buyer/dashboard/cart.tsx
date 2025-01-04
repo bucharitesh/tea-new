@@ -28,6 +28,8 @@ const Cart = () => {
     quantity: each.quantity,
   }));
 
+  console.log("cart", columnData)
+
   const columns = useMemo(
     () => [
       { Header: "Mark", accessor: "mark" },

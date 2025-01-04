@@ -1,12 +1,12 @@
 // app/api/orders/route.ts
-import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {
-    const { userId, cartItems } = await request.json();
+    const { userId, cartItems, delCharges, othCharges } = await request.json();
 
     if (!userId || !cartItems || cartItems.length === 0) {
       return NextResponse.json(
@@ -19,11 +19,18 @@ export async function POST(request: Request) {
       data: {
         userId,
         totalAmount: cartItems.reduce(
-          (sum, item) => sum + item.price * item.quantity,
+          (sum, item) =>
+            sum +
+            item.price *
+              (item.pkgs * item.kgPerBag -
+                item.sampleUsed) *
+              item.quantity,
           0
         ),
         status: "PENDING",
         items: cartItems,
+        delCharges,
+        othCharges,
       },
     });
 

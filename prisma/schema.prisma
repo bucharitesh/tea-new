@@ -6,7 +6,7 @@
 
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL")
+  url      = "mongodb+srv://pranavyellayi:AuqGbtY5acYnfutN@cluster0.vcvtx.mongodb.net/tea?retryWrites=true&w=majority"
 }
 
 generator client {
@@ -80,6 +80,8 @@ model Admin {
 
 model Product {
   id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  lotNo               String?  @unique
+  mark                String?
   sellerId            String   @unique
   invoiceNo           Int
   grade               ProductGrade
@@ -118,6 +120,8 @@ model Order {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   userId      String     
   items       OrderItem[]
+  delCharges  Float?
+  othCharges  Float?
   totalAmount Float
   status      OrderStatus
   createdAt   DateTime   @default(now())

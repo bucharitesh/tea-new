@@ -24,7 +24,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getAverageScore } from "@/lib/utils";
 import { Product } from "@prisma/client";
 import { useMemo, useState } from "react";
 import {
@@ -55,7 +54,9 @@ const ProductTable = ({ data, currentPage, setCurrentPage, pages }) => {
         Header: "Net Weight",
         accessor: "netWeight",
         Cell: ({ row }) =>
-          `${row.original.pkgs * row.original.kgPerBag - row.original.sampleUsed} Kg`,
+          `${
+            row.original.pkgs * row.original.kgPerBag - row.original.sampleUsed
+          } Kg`,
       },
       {
         Header: "Score",
@@ -67,7 +68,11 @@ const ProductTable = ({ data, currentPage, setCurrentPage, pages }) => {
         Header: "Total",
         accessor: "total",
         Cell: ({ row }) =>
-          `₹${(row.original.price * (row.original.pkgs * row.original.kgPerBag - row.original.sampleUsed)).toFixed(2)}`,
+          `₹${(
+            row.original.price *
+            (row.original.pkgs * row.original.kgPerBag -
+              row.original.sampleUsed)
+          ).toFixed(2)}`,
       },
       {
         Header: "Action",
@@ -86,6 +91,7 @@ const ProductTable = ({ data, currentPage, setCurrentPage, pages }) => {
               division: row.original.division,
               verification_status: row.original.verification_status,
               score: row.original.score,
+              mark: row.original.mark,
             }}
           />
         ),

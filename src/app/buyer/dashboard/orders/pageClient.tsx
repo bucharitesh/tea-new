@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
 const OrdersTable = ({ data, currentPage, setCurrentPage, pages }) => {
+  console.log("data", data);
   const columns = useMemo(
     () => [
       { Header: "Order ID", accessor: "id" },
@@ -26,6 +27,8 @@ const OrdersTable = ({ data, currentPage, setCurrentPage, pages }) => {
         const quantity = row.original.items.reduce((acc, item) => acc + item.quantity, 0);
         return `${quantity}`;
       } },
+      { Header: "Delivery Charges", accessor: "delCharges", Cell: ({ value }) => `₹${value}` },
+      { Header: "Other Charges", accessor: "othCharges", Cell: ({ value }) => `₹${value}` },
       { Header: "Total Amount", accessor: "totalAmount", Cell: ({ value }) => `₹${value}` },
       {
         Header: "Ordered At",
