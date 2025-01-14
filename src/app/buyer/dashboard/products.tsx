@@ -65,14 +65,10 @@ const ProductTable = ({ data, currentPage, setCurrentPage, pages }) => {
       },
       { Header: "Price per Kg", accessor: "price" },
       {
-        Header: "Total",
-        accessor: "total",
+        Header: "Minimum Order",
+        accessor: "minOrder",
         Cell: ({ row }) =>
-          `₹${(
-            row.original.price *
-            (row.original.pkgs * row.original.kgPerBag -
-              row.original.sampleUsed)
-          ).toFixed(2)}`,
+          `${row.original.pkgs * row.original.kgPerBag - row.original.sampleUsed} Kg`,
       },
       {
         Header: "Action",
@@ -115,17 +111,8 @@ const ProductTable = ({ data, currentPage, setCurrentPage, pages }) => {
           {headerGroups.map((headerGroup) => (
             <TableRow {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <TableHead
-                  {...column.getHeaderProps(column.getSortByToggleProps())}
-                >
+                <TableHead key={column.id}>
                   {column.render("Header")}
-                  <span>
-                    {column.isSorted
-                      ? column.isSortedDesc
-                        ? " 🔽"
-                        : " 🔼"
-                      : ""}
-                  </span>
                 </TableHead>
               ))}
             </TableRow>
@@ -237,9 +224,7 @@ const ScoreAnalysis = ({ score }) => {
       score.taste +
       score.liquor +
       score.infusion +
-      score.grading) /
-      50) *
-    10;
+      score.grading));
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -248,7 +233,7 @@ const ScoreAnalysis = ({ score }) => {
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
       >
-        {averageScore.toFixed(1)}/10
+        {averageScore}
       </PopoverTrigger>
       <PopoverContent
         className="w-[250px] p-4"

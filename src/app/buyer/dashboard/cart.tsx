@@ -105,7 +105,9 @@ const Cart = () => {
   const gstAmount = cartItems?.length
     ? (subtotal + deliveryCharges + otherCharges) * gstRate
     : 0;
-  const totalAmount = subtotal + deliveryCharges + otherCharges + gstAmount;
+  // Round off to 2 decimal places .60 to 1 and .40 to 0
+  const roundOff = gstAmount % 1;
+  const totalAmount = subtotal + deliveryCharges + otherCharges + gstAmount - roundOff;
 
   return (
     <div className="flex flex-col w-full text-lg">
@@ -123,20 +125,10 @@ const Cart = () => {
                 <Table {...getTableProps()}>
                   <TableHeader>
                     {headerGroups.map((headerGroup) => (
-                      <TableRow
-                        key={headerGroup?.id}
-                        {...headerGroup.getHeaderGroupProps()}
-                      >
+                      <TableRow key={headerGroup?.id}>
                         {headerGroup.headers.map((column) => (
                           <TableHead key={column?.id}>
                             {column.render("Header")}
-                            <span>
-                              {column.isSorted
-                                ? column.isSortedDesc
-                                  ? " 🔽"
-                                  : " 🔼"
-                                : ""}
-                            </span>
                           </TableHead>
                         ))}
                       </TableRow>
@@ -176,6 +168,27 @@ const Cart = () => {
           <div className="bg-gray-50 p-6 rounded-lg border">
             <h3 className="font-semibold text-lg mb-4">Order Summary</h3>
             <div className="space-y-3">
+              {cartCount > 0 && <div className="w-fulljustify-between border-y py-3 space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Total Packages:</span>
+                  <span>
+                    {cartItems.reduce(
+                      (total, item) => total + item.product.pkgs,
+                      0
+                    )}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Total Weight:</span>
+                  <span>
+                    {cartItems.reduce(
+                      (total, item) =>
+                        total + item.product.pkgs * item.product.kgPerBag,
+                      0
+                    )}Kg
+                  </span>
+                </div>
+              </div>}
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal:</span>
                 <span>₹{subtotal.toFixed(2)}</span>
@@ -191,6 +204,10 @@ const Cart = () => {
               <div className="flex justify-between">
                 <span className="text-gray-600">GST (5%):</span>
                 <span>₹{gstAmount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Round off:</span>
+                <span>₹{roundOff.toFixed(2)}</span>
               </div>
               <div className="flex justify-between font-bold border-t pt-3 text-lg">
                 <span>Total Amount:</span>
